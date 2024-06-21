@@ -7,7 +7,7 @@ body {
 
 body,
 button {
-  background: #fff;
+  background: #d1d1d1;
   color: #000;
   font-family: "Roboto Mono", monospace;
 }
@@ -21,7 +21,7 @@ body.dark-mode,
 body.dark-mode button,
 button.dark-mode,
 button.dark-mode button {
-  background: #000;
+  background: #2e2e2e;
   color: #fff;
 }
 
@@ -169,8 +169,8 @@ a:hover {
   margin: 25px 0;
 }
 .toggler .show {
-  border-color: #eb4888;
-  color: #eb4888;
+  border-color: #FFA500;
+  color: #FFA500;
 }
 @media (max-width: 600px) {
   .toggler {

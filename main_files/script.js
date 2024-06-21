@@ -13,20 +13,7 @@ let colors = ["#0099DC", "#FFA500", "#FF446B", "#4A4A4D"];
 
 (function() {
   setModeEventListener();
-  setRandomLinkColor();
-  //setColorHoverListener();
   setBioEventListener();
-  /*setRandomPhoto();*/
-
-/*
-  setInterval(() => {
-    setRandomPhoto();
-  }, 2500);
-
-  setInterval(() => {
-    setRandomLinkColor();
-  }, 5000);
-  */
 })();
 
 /* Dark Mode */
@@ -37,32 +24,6 @@ function setModeEventListener() {
   });
 }
 
-/* Colors */
-
-function getRandomColor() {
-  return colors[Math.floor(Math.random() * colors.length)];
-}
-
-function setRandomLinkColor() {
-  Array.from(document.getElementsByTagName("a")).forEach(e => {
-    e.style.color = getRandomColor();
-  });
-}
-
-function setColorHoverListener() {
-  Array.from(document.querySelectorAll("a, button")).forEach(e => {
-    e.addEventListener("mouseover", setRandomLinkColor);
-  });
-}
-
-/* Photos */
-
-function setRandomPhoto() {
-  let num = Math.floor(Math.random() * 14) + 1;
-  document.getElementById(
-    "propic"
-  ).src = `https://cassidoo.co/img/face${num}.jpg`;
-}
 
 /* Bio Toggles */
 
@@ -74,7 +35,7 @@ function setBioEventListener() {
 
 function bioToggle(e) {
   let bioType = e.target;
-  let color = getRandomColor();
+  let color = "#FFA500";
   off(bioType);
   bioType.style.cssText = `border-color: ${color}; color: ${color}; font-weight: bold;`;
   let bioTypeElement = document.getElementsByClassName(bioType.id)[0];
