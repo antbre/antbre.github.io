@@ -7,9 +7,9 @@ body {
 
 body,
 button {
-  background: #d1d1d1;
-  color: #000;
   font-family: "Roboto Mono", monospace;
+  background: #2e2e2e;
+  color: #fff;
 }
 
 ::selection {
@@ -17,12 +17,12 @@ button {
   color: #000;
 }
 
-body.dark-mode,
-body.dark-mode button,
-button.dark-mode,
-button.dark-mode button {
-  background: #2e2e2e;
-  color: #fff;
+body.light-mode,
+body.light-mode button,
+button.light-mode,
+button.light-mode button {
+  background: #d1d1d1;
+  color: #000;
 }
 
 button {
@@ -39,6 +39,21 @@ button {
 button:hover {
   background: rgba(150, 151, 156, 0.1);
   cursor: pointer;
+}
+
+papertitle {
+  font-family: 'Roboto', 'bolt';
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 10cm;
+}
+
+#detail {
+  display: none;
+}
+
+#summary:hover #detail {
+  display: block;
 }
 
 .container {

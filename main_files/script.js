@@ -1,14 +1,3 @@
-//let colors = ["#24d05a", "#eb4888", "#10a2f5", "#e9bc3f"];
-// massdrop
-//let colors = ["teal", "pink", "blue", "flesh"];
-//let colors = ["#64B9B0", "#EC6F86", "#344652", "#EEA5A8"];
-
-// Safyi real estate
-//let colors = ["red", "d blue", "teal", "yellow"];
-//let colors = ["#FF4756", "#161849", "#317585", "#FFB600"];
-
-// camera lens
-//let colors = ["blue", "yellow", "rosa", "gray"];
 let colors = ["#0099DC", "#FFA500", "#FF446B", "#4A4A4D"];
 
 (function() {
@@ -20,13 +9,12 @@ let colors = ["#0099DC", "#FFA500", "#FF446B", "#4A4A4D"];
 function setModeEventListener() {
   let list = document.body.classList;
   document.getElementById("toggler").addEventListener("change", event => {
-    event.target.checked ? list.add("dark-mode") : list.remove("dark-mode");
+    event.target.checked ? list.remove("light-mode"): list.add("light-mode");
   });
 }
 
 
 /* Bio Toggles */
-
 function setBioEventListener() {
   Array.from(document.getElementsByTagName("button")).forEach(e => {
     e.addEventListener("click", bioToggle);
