@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>TactileOdometry</title>
+
+    <link rel="stylesheet" href="./files/app.css">
+    <link rel="stylesheet" href="./files/project.min.css">
+    <link rel="icon" type="image/png" href="">
+</head>
+<body>
+    <div class="container" id="main">
+        <div class="row">
+            <h2 class="col-md-12 text-center">
+                <span class="pre"><b>
+                    Embodying Compliant Touch in Aerial Manipulation for Blind Navigation</b><br>&nbsp;&nbsp;&nbsp; Blind Navigation with Drones</span>
+                <br>
+            </h2>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-10 text-center col-md-offset-1">
+                <ul class="list-inline">
+                    <li>
+                        <a href="antbre.github.io" target="_blank">
+                            Anton Bredenbeck
+                        </a>
+                        <sup>1</sup>
+                    </li>
+                    <li>
+                        <a href="https://scholar.google.com/citations?user=7RAU5jYAAAAJ&hl=en" target="_blank">Cosimo Della Santina</a>
+                        <sup>2</sup>
+                    </li>
+                    <li>
+                        <a href="https://www.tudelft.nl/en/staff/s.hamaza/?cHash=de0a5f01872d7e75ad0835943ae9af45" target="_blank">
+                            Salua Hamaza
+                        </a>
+                        <sup>1</sup>
+                    </li>
+                </ul>
+            </div>
+            <!-- add affiliation logos -->
+            <div class="row">
+                <div class="col-md-10 text-center col-md-offset-1">
+                    <ul class="list-inline">
+                        <li>
+                            <img src="./files/TU_Delft_Logo.svg" height="35px">
+                        </li>
+                    </ul>
+                </div>
+                <!-- add affiliations with superscripts -->
+                <div class="col-md-10 text-center col-md-offset-1">
+                    <ul class="list-inline">
+                        <li>
+                            <sup>1</sup>
+                            <a href="https://www.tudelft.nl/en/ai/biomorphic-intelligence-lab" target="_blank">
+                            Biomorphic Intelligence Lab
+                            </a>
+                        </li>
+                        <li>
+                            <sup>2</sup>
+                            <a href="https://www.tudelft.nl/en/me/about/departments/cognitive-robotics-cor" target="_blank">
+                            Cognitive Robotics
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8 text-center col-md-offset-2">
+                <ul class="nav nav-pills nav-justified">
+                    <li>
+                        <!-- ToDo add pre-print link-->
+                        <a href="./blind_navigation.html" target="_blank">
+                        <img src="./files//blind_navigation/blind_nav_paper.png" height="60px">
+                            <h4><strong>pre-print</strong></h4>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://youtu.be/Z3fTCOoG-8s">
+                        <img src="./files/youtube_icon.png" height="60px">
+                            <h4><strong>Presentation</strong></h4>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/bioMorphic-Intelligence-Lab/tactile-drone" target="_blank">
+                        <img src="./files/github.png" height="60px">
+                            <h4><strong>Code</strong></h4>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <br><br>        
+            <div class="col-md-8 text-center col-md-offset-2">
+                <p class="text-center" size="3">
+                    <b>TL;DR</b>: We equip a conventional quadrotor with a compliant, finger like sensing tool.
+                    Using contact forces infered from the finger joint displacements we enable the MAV to safely navigate in unknown environments.
+                </p>
+            </div>
+        </div>
+        <hr><br>
+
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <h2><b>Overview</b></h2>
+                <p text-class="justify">
+                    Coming Soon... 
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <h2><b>Methods</b></h2>
+                <p class="text-justify">
+                    Coming Soon...
+                </p>
+                <br>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <h2><b>Results</b></h2> 
+                <p text-class="justify">
+                    Coming Soon...
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <h3>
+                    <b>BibTex</b>
+                </h3>
+                <div class="form-group col-md-12 col-md-offset-1">
+                    <textarea id="bibtex" class="form-control" readonly="">
+@inproceedings{bredenbeck2024,
+    title={Embodying Compliant Touch in Aerial Manipulation for Blind Navigation},
+    author={Bredenbeck, Anton and Della Santina, Cosimo and Hamaza, Salua},
+    year = {2024}
+}</textarea>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <p class="text-justify" style="font-size:0.6em">The website template was adapted from <a href="https://jonbarron.info/mipnerf/" style="font-size:1em">John Barron</a> and <a href="http://mgharbi.com/" style="font-size:1em">Michaël Gharbi</a>.
+        </p>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const textarea = document.getElementById('bibtex');
+
+            function adjustHeight(element) {
+                element.style.height = 'auto'; // Reset height to auto to get the scrollHeight
+                element.style.height = (element.scrollHeight) + 'px'; // Set height to scrollHeight
+                element.style.overflow = 'hidden'; // Hide overflow to prevent scrollbar
+            }
+
+            // Initial adjustment
+            adjustHeight(textarea);
+        });
+    </script>
+</body>
+</html>
