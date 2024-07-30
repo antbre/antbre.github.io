@@ -1,12 +1,15 @@
 <!DOCTYPE html>
-<html><head lang="en"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html>
+<head lang="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
     <title>TactileOdometry</title>
 
     <link rel="stylesheet" href="./files/app.css">
     <link rel="stylesheet" href="./files/project.min.css">
     <link rel="icon" type="image/png" href="">
-
+</head>
+<body>
     <div class="container" id="main">
         <div class="row">
             <h2 class="col-md-12 text-center">
@@ -58,7 +61,7 @@
                 <div class="col-md-10 text-center col-md-offset-1">
                     <ul class="list-inline">
                         <li style="margin-right: 110px;">
-                                <img src="./files/tu_dresden.svg" height="35px"/>
+                                <img src="./files/tactile_odometry/tu_dresden.svg" height="35px"/>
                         </li>
                         <li>
                             <img src="./files/TU_Delft_Logo.svg" height="35px">
@@ -92,8 +95,9 @@
             <div class="col-md-8 text-center col-md-offset-2">
                 <ul class="nav nav-pills nav-justified">
                     <li>
-                        <a href="ToDo" target="_blank">
-                        <img src="./files/tactile_odometry_paper_image.png" height="60px">
+                        <!-- ToDo add pre-print link-->
+                        <a href="./tactile_odometry_drone.html" target="_blank">
+                        <img src="./files/tactile_odometry/tactile_odometry_paper_image.png" height="60px">
                             <h4><strong>pre-print</strong></h4>
                         </a>
                     </li>
@@ -111,10 +115,119 @@
                     </li>
                 </ul>
             </div>
+            <br><br>        
+            <div class="col-md-8 text-center col-md-offset-2">
+                <p class="text-center" size="3">
+                    <b>TL;DR</b>: We reconstruct the odometry of a Micro Aerial Vehicle (MAV) from contact information (rotatry ticks of a trackball and displacement of a passively compliant join)
+                </p>
+            </div>
         </div>
-        <hr>
-        Coming soon ...
+        <hr><br>
+
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <video width="100%" onmouseover="this.pause()" onmouseout="this.play()" autoplay muted loop class="center">
+                    <source src="./files/videos/tactile_odom_miniVid.mp4" type='video/mp4'>
+                </video> <br>
+                <h2><b>Overview</b></h2>
+                <p text-class="justify">
+                    Aerial robots are well-established technologies in environments characterized by reliable GNSS signals and favorable conditions for visual navigation. However, their robustness is significantly challenged whenever ambient lighting is insufficient, for example, in underground, dark, or foggy environments. There, conventional navigation methods solely based on computer vision are very limited.
+                    <br>
+                    This work proposes the completely novel approach to Aerial Tactile Odometry for pose estimation of aerial robots exploiting contact to precisely determine the system's pose. By employing a compliant end-effector design with onboard tactile information by means of a trackball, we infer the complete MAV's pose with respect to the environment, and the distance traveled during contact.
+                    <br>
+                    Through a large set of experiments, the proposed method shows centimeter accuracy for various environment orientations and different trajectories followed. Akin to conventional dead-reckoning odometry methods in wheeled robotics, this method provides a valuable additional source of pose estimation, increasing the robustness of aerial robots -- especially aerial manipulators -- in the real world.
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <h2><b>Methods</b></h2>
+                <p class="text-justify">
+                    The tactile odometry setup is mounted on a conventional quadrotor (Holybro X500-V2).
+                    We propose a compliant EE that implements three key features: linear compliance, rotational compliance, and measurements of the distance traveled while in contact.
+                    It consists of one trackball as input for the odometry filter and a second trackball to enable two mechanically well-defined points of contact.
+                    This allows for self-alignment of the EE about the revolute axle and low friction while moving along the wall.
+                    The displacement of the stiff linear compliance is measured by a linear potentiometer, allowing estimation and regulation of the contact force based on the spring's stiffness and the rotational compliance is measured with an absolute encoder. 
+                </p>
+                <br>
+            </div>
+            <div class="col-md-10 col-md-offset-2">
+                <img src="./files/tactile_odometry/ee_frames.png"  width="750"><br><br>
+            </div>
+            <div class="col-md-10 col-md-offset-1">
+                <p class="text-justify">
+                    This paper aims to use only an IMU and the tactile odometry for pose estimation during contact.
+                    Based on IMU measurements, the roll and pitch angle of the MAV can be estimated, whereas the IMU-based estimate of the yaw angle has a high uncertainty.
+                    Thus, the estimation of the MAV yaw angle requires additional external information.
+                    For this purpose, the EE of the MAV can freely tilt about the MAV's z-axis to be able to align with any vertical wall in a way that the y-axis of the odometry frame is parallel to the normal vector of the wall (i.e., the y-axis of the wall frame). 
+                    The orientation of the MAV w.r.t. the wall frame is estimated
+                    based on the pitch and roll estimate from the IMU,
+                    and the yaw estimate based on the measured EE joint angle.
+                </p>
+                <br>
+            </div>
+            <div class="col-md-10 col-md-offset-2">
+                <img src="./files/tactile_odometry/Overview_wide.png"  class="mx-auto d-block" width="750"><br><br>
+            </div>
+            <div class="col-md-10 col-md-offset-1">
+                <p class="text-justify">
+                    The position increment of the local trackball motion is then used to estimate the EE position in a dead reckoning fashion. 
+                    Applying the inverse kinematics yields the current pose of the MAV.
+                </p>
+                <br>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <h2><b>Results</b></h2> 
+                <p text-class="justify">
+                    In a total of 32 flight experiments, covering various relative environment orientations and trajectory profiles, the proposed methodology showcases centimeter accuracy with a relative error below 5% of the travelled distance, on average. The system is capable of following unknown flat surfaces allowing suitable contact for the position estimation in 90% of the tracked distance.
+                    <br>
+                    The proposed approach is particularly suited to aerial interaction tasks where contact is desired, as such contact-based odometry provides feedback directly in the task space, enabling more precise EE control.
+                </p>
+            </div>
+            <div class="col-md-10 col-md-offset-1">
+                <img src="./files/tactile_odometry/line_sine.png" height="300">
+                <img src="./files/tactile_odometry/alignment.png" height="300">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <h3>
+                    <b>BibTex</b>
+                </h3>
+                <div class="form-group col-md-12 col-md-offset-1">
+                    <textarea id="bibtex" class="form-control" readonly="">
+@inproceedings{schuster2024,
+    title={Tactile Odometry in Aerial Physical Interaction},
+    author={Schuster, Micha and Bredenbeck, Anton and Beitelschmidt, Michael and Hamaza, Salua},
+    booktitle = {IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
+    month = oct,
+    year = {2024}
+}</textarea>
+                </div>
+            </div>
+        </div>
         <hr>
         <p class="text-justify" style="font-size:0.6em">The website template was adapted from <a href="https://jonbarron.info/mipnerf/" style="font-size:1em">John Barron</a> and <a href="http://mgharbi.com/" style="font-size:1em">Michaël Gharbi</a>.
         </p>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const textarea = document.getElementById('bibtex');
+
+            function adjustHeight(element) {
+                element.style.height = 'auto'; // Reset height to auto to get the scrollHeight
+                element.style.height = (element.scrollHeight) + 'px'; // Set height to scrollHeight
+                element.style.overflow = 'hidden'; // Hide overflow to prevent scrollbar
+            }
+
+            // Initial adjustment
+            adjustHeight(textarea);
+        });
+    </script>
+</body>
+</html>
