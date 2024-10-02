@@ -5,6 +5,13 @@
     
     <title>TactileOdometry</title>
 
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+    </script>
+    <script type="text/javascript"
+    src="http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+
     <link rel="stylesheet" href="./files/app.css">
     <link rel="stylesheet" href="./files/project.min.css">
     <link rel="icon" type="image/png" href="">
@@ -102,17 +109,54 @@
 
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
+                <div class="col-md-10 col-md-offset-1">
+                    <img src="./files/tactile_drone/overview_figure.png"  width="750"><br><br>
+                </div>
                 <h2><b>Overview</b></h2>
                 <p text-class="justify">
-                    Coming Soon... 
+                    Aerial robots are a well-established solution for environmental surveying, exploration, and inspection, thanks to their superior maneuverability and agility.
+                    Nowadays, the algorithms that provide these capabilities rely on GNSS and Vision, which are obstructed in some environments of interest, e.g., indoors and underground or in smoke and dust.
+                    In similar conditions, animals rely on the sense of touch and compliant responses to interactions embodied in the body morphology.
+                    This way, they can navigate safely using tactile cues by <em>feeling</em> the environment surrounding them.
+                    In this work, we take inspiration from the natural example and propose an approach that allows a quadrotor to navigate using tactile information from the environment.
+                    We propose to endow a conventional quadrotor with a novel robotic finger that embodies compliance and sensing capabilities.
+                    We complete this design with a navigation approach that generates new waypoints based on the robotic finger's contact information to follow the unknown environment.
+                    The overall system's evaluation shows successful, repeatable results in 36 flight experiments with various relative angles between the drone and a planar surface.
                 </p>
             </div>
         </div>
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <h2><b>Methods</b></h2>
+                <div class="col-md-20 col-md-offset-2">
+                    <img src="./files/tactile_drone/ExplodedFinger.png"  height="175">
+                    <img src="./files/tactile_drone/StiffnessEllipsoids.png"  height="175">
+                    <br><br>
+                </div>
                 <p class="text-justify">
-                    Coming Soon...
+                    One of the contributions of this work is in the novel, bespoke design of a human-inspired robotic finger conceptualized for the proposed aerial tactile task, that allows for precise adjustment of its Cartesian stiffness, as well as a complete 3D force estimation.
+                    This feature is vital for handling arbitrary environmental orientations and shapes, making it crucial for the task of environment following.
+                    The modeling of the robotic finger operates under two key assumptions: while in contact, the base is moving slowly, and the dynamic coupling of the robotic finger and the base is negligible.
+                    In other words, the system operates under quasi-static conditions $\dot{\mathbf{\zeta}} \simeq 0$ and $\ddot{\mathbf{\zeta}} \simeq 0$ and the disturbance of the external force onto the base and is near zero $||\mathbf{J}_{\mathcal{B},\mathcal{E}}^T \mathbf{f}_\mathcal{E}|| \simeq 0$.
+                    The interaction tool exhibits joint stiffness, thanks to the rotational springs pre-tensioned at each joint. 
+                    Therefore, by measuring the displacement of the joints from its nominal positions we can infer the external force acting at the end-effector via the Moore-Penrose inverse of the equations of motion:
+                    $$
+                    \begin{align}
+                    \mathbf{f}_\mathcal{E} = \mathbf{J}_\mathcal{E}^{T,\dagger}(\mathbf{\xi})\big(\mathbf{G}_\mathcal{E}(\mathbf{\xi},^\mathcal{W}\mathbf{\Omega}_\mathcal{B}) + \mathbf{K}_\mathcal{E}\mathbf{\xi} - \mathbf{A}_\mathcal{E}\tau_\mathcal{E}\big)
+                    \end{align}
+                    $$
+                </p>
+                <div class="col-md-5 col-md-offset-0">
+                    <img src="./files/tactile_drone/AMinContact.png"  width="350"><br><br>
+                </div>
+                <p class="text-justify">
+                    Thanks to the quasi-static assumption we can infer the local surface normal directly from the contact force estimated from the interaction tool displacement.
+                    As pictured to the left, we generate new reference positions by moving the last reference position orthogonal to the surface normal, while also regulating the distance to the surface to stay within a certain force threshold. I.e. 
+                    $$
+                    \begin{align}
+                        \mathbf{p}_{\mathcal{E},\mathrm{ref}}[k+1] &= \mathbf{p}_{\mathcal{E},\mathrm{ref}}[k]+ \alpha\frac{\hat{\mathbf{f}}_\mathcal{E}\times\mathbf{e}_z}{||\hat{\mathbf{f}}_\mathcal{E}\times\mathbf{e}_z||} + \mathit{l}(\hat{\mathbf{f}}_\mathcal{E})^\mathcal{B}\mathbf{e}_{y}
+                    \end{align}
+                    $$
                 </p>
                 <br>
             </div>
@@ -122,8 +166,20 @@
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <h2><b>Results</b></h2> 
+
                 <p text-class="justify">
-                    Coming Soon...
+                In a total of 36 flight experiments we show that the UAV is capable of successfully navigating unknown environments of varying shape and orientation relying solely on the sense of touch. 
+                The figure below (left) showcases all trials for various relative angles of the environment, the average path taken and its standard deviation.  
+                We can see that we can successfully handle unknown environments of changing shape and relative angles up to $20^\circ$. 
+                Albeit the performance being best at low relative angles.  
+                Furthermore, the figure below (rigth) shows that we can also handle superimposed tasks, such as varying the altitude while using the tactile navigation approach.
+                </p>
+                <div class="col-md-10 col-md-offset-1">
+                    <img src="./files/tactile_drone/experiments.png"  height=255>
+                    <img src="./files/tactile_drone/superimposed_experiments.png"  height=255>
+                    <br><br>
+                </div>
+                <p text-class="justify">
                 </p>
             </div>
         </div>
