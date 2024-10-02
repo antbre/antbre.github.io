@@ -5,12 +5,8 @@
     
     <title>TactileOdometry</title>
 
-    <script type="text/x-mathjax-config">
-        MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
-    </script>
-    <script type="text/javascript"
-    src="http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-    </script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <link rel="stylesheet" href="./files/app.css">
     <link rel="stylesheet" href="./files/project.min.css">
@@ -137,7 +133,7 @@
                     One of the contributions of this work is in the novel, bespoke design of a human-inspired robotic finger conceptualized for the proposed aerial tactile task, that allows for precise adjustment of its Cartesian stiffness, as well as a complete 3D force estimation.
                     This feature is vital for handling arbitrary environmental orientations and shapes, making it crucial for the task of environment following.
                     The modeling of the robotic finger operates under two key assumptions: while in contact, the base is moving slowly, and the dynamic coupling of the robotic finger and the base is negligible.
-                    In other words, the system operates under quasi-static conditions $\dot{\mathbf{\zeta}} \simeq 0$ and $\ddot{\mathbf{\zeta}} \simeq 0$ and the disturbance of the external force onto the base and is near zero $||\mathbf{J}_{\mathcal{B},\mathcal{E}}^T \mathbf{f}_\mathcal{E}|| \simeq 0$.
+                    In other words, the system operates under quasi-static conditions \(\dot{\mathbf{\zeta}} \simeq 0\) and\(\ddot{\mathbf{\zeta}} \simeq 0\) and the disturbance of the external force onto the base and is near zero \(||\mathbf{J}_{\mathcal{B},\mathcal{E}}^T \mathbf{f}_\mathcal{E}|| \simeq 0\).
                     The interaction tool exhibits joint stiffness, thanks to the rotational springs pre-tensioned at each joint. 
                     Therefore, by measuring the displacement of the joints from its nominal positions we can infer the external force acting at the end-effector via the Moore-Penrose inverse of the equations of motion:
                     $$
@@ -170,7 +166,7 @@
                 <p text-class="justify">
                 In a total of 36 flight experiments we show that the UAV is capable of successfully navigating unknown environments of varying shape and orientation relying solely on the sense of touch. 
                 The figure below (left) showcases all trials for various relative angles of the environment, the average path taken and its standard deviation.  
-                We can see that we can successfully handle unknown environments of changing shape and relative angles up to $20^\circ$. 
+                We can see that we can successfully handle unknown environments of changing shape and relative angles up to \(20^\circ\). 
                 Albeit the performance being best at low relative angles.  
                 Furthermore, the figure below (rigth) shows that we can also handle superimposed tasks, such as varying the altitude while using the tactile navigation approach.
                 </p>
