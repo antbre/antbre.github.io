@@ -111,21 +111,23 @@
         <hr><br>
 
         <div class="row">
-            <div class="col-md-12 col-md-offset-0">
+            <div class="col-md-12">
                 <h2><b>Overview</b></h2>
-                <div class="col-md-5 col-md-offset-0" style="float: left; margin-right: 15px; margin-bottom: 15px;">
-                    <img src="./files/colliding_drone/overview_figure.png" width="430">
+                <div style="overflow: hidden;">
+                    <div style="float: left; margin-right: 15px; margin-bottom: 15px;">
+                        <img src="./files/colliding_drone/overview_figure.png" width="430">
+                    </div>
+                    <p class="text-justify">
+                        Aerial robots are a well-established solution for exploration, monitoring, and inspection, thanks to their superior maneuverability and agility.
+                        However, in many environments of interest, they risk crashing and sustaining damage following collisions.
+                        Traditional methods focus on avoiding obstacles entirely to prevent damage, but these approaches can be limiting, particularly in complex environments where collisions may be unavoidable, or on weight and compute-constrained platforms.
+                        In this project we develop an approach to enhance the robustness and autonomy of drones in such scenarios by developing a path recovery and adjustment method for a high-speed collision-resistant drone equipped with binary contact sensors.
+                        The proposed system employs an estimator that explicitly models collisions, using pre-collision velocities and rates to predict post-collision dynamics, thereby improving the drone's state estimation accuracy.
+                        Additionally, we introduce a vector-field-based path representation which guarantees convergence to the path.
+                        Post-collision, the contact point is incorporated into the vector field as a repulsive potential, enabling the drone to avoid obstacles while naturally converging to the original path.
+                        The effectiveness of this method is validated through Monte Carlo simulations and demonstrated on a physical prototype, showing successful path following and adjustment through collisions as well as recovery from collisions at speeds up to 3.7 m / s.
+                    </p>
                 </div>
-                <p class="text-justify">
-                    Aerial robots are a well-established solution for exploration, monitoring, and inspection, thanks to their superior maneuverability and agility.
-                    However, in many environments of interest, they risk crashing and sustaining damage following collisions.
-                    Traditional methods focus on avoiding obstacles entirely to prevent damage, but these approaches can be limiting, particularly in complex environments where collisions may be unavoidable, or on weight and compute-constrained platforms.
-                    In this project we develop an approach to enhance the robustness and autonomy of drones in such scenarios by developing a path recovery and adjustment method for a high-speed collision-resistant drone equipped with binary contact sensors.
-                    The proposed system employs an estimator that explicitly models collisions, using pre-collision velocities and rates to predict post-collision dynamics, thereby improving the drone's state estimation accuracy.
-                    Additionally, we introduce a vector-field-based path representation which guarantees convergence to the path.
-                    Post-collision, the contact point is incorporated into the vector field as a repulsive potential, enabling the drone to avoid obstacles while naturally converging to the original path.
-                    The effectiveness of this method is validated through Monte Carlo simulations and demonstrated on a physical prototype, showing successful path following and adjustment through collisions as well as recovery from collisions at speeds up to 3.7 m / s.
-                </p><br>
             </div>
         </div>
         <div class="row">
@@ -197,13 +199,16 @@
                     For any given desired (differential) path we represent then find a vector field representing the path. 
                     Hereby the goal is to construct a vector field such that by integrating along the field one converges to the original path and moves along it while also avoiding known objects.
                     The vector field is initialized without any known objects and only after the reflexive collision recovery procedure in the previous section has succeeded we add the location of the triggering sensor as a new known obstacle. 
-                    The overall vector field function is composed of three components, as illustrate below: 
+                    The overall vector field function for a twice differential desired path \(\mathbf{h}(\tau)\) with the closest point being located at \(\mathbf{h}(\tau_\min)\) is composed of the normalized sum of three components, as illustrate below: 
                     <ol type="i" style="font-size: 20px;">
-                        <li>One that points towards the nearest point on the path</li>
-                        <li>One representing the velocity at the nearest point</li>
-                        <li>One that repels from known obstacles.</li>
+                        <li>One that points towards the nearest point on the path:  \(\kappa_p(\mathbf{h}(\tau_{\text{min}}) - \mathbf{x})\)</li>
+                        <li>One representing the velocity at the nearest point:  \(\frac{1}{\kappa_v||\mathbf{h}(\tau_{\text{min}}) - \mathbf{x}||}\mathbf{h}'(\tau_{\text{min}})\)</li>
+                        <li>One that repels from known obstacles:  \(\sum_{k=1}^{m} \mathbf{g}_{\text{collision}, k}(\mathbf{x})\)</li>
                     </ol>
-                </p><br><br>
+                </p>
+                <p class="text-justify">
+                    Where \(\kappa_p, \kappa_v, \mathbf{g}_{\text{collision},k}(\mathbf{x})\) are the weighting factors for position and velocity as well as the repulsive potential function for the \(k\)-th known collision. Please refer to the paper for more details on how to efficiently find the nearest point on the path.
+                </p>
                 <div class="col-md-12 col-md-offset-2">
                     <video height="400" onmouseover="this.pause()" onmouseout="this.play()" autoplay muted loop class="center">
                         <source src="./files/videos/vectorfield_animation.mp4" type='video/mp4'>
@@ -211,47 +216,48 @@
                 </div><br><br>
                 
                 <h3><b>Hardware Prototype</b></h3>
-                <div class="col-md-5 col-md-offset-0" style="float: right; margin-left: 20px; margin-bottom:10px">
-                    <img src="./files/colliding_drone/hw_impl.png" width="460">
-                </div>
-                <p class="text-justify">
-                    The overall hardware prototype consists of a collision-resilient drone equipped with binary contact sensors. 
-                    The main purpose of the contact sensor is to trigger a binary signal when the respective corner of the tensegrity vehicle makes contact.
-                    It is designed for high sensitivity, contact-detection from all directions, physical robustness, and minimal weight.
-                    At the same time since we only require a binary signal there are no range or significant resolution requirements.
-                    The sensor consists of a 3D-printed housing with a compliant mechanism connected to a dome, a button magnet inside the dome, and a 3D hall-effect sensor positioned below.
-                    The compliant mechanism includes four spring-like connections between the casing and the dome, allowing displacement along all three axes while returning the dome to its original position when no external force is applied.
-                    The housing is printed using TPU material making it flexible and robust. 
-                    When in contact, the contact force displaces the dome, altering the magnetic field measured by the hall sensor from its nominal value.
-                    Therefore, the binary output for sensor is then:
-                    $$
-                    \begin{align} 
-                        \mathcal{C}_i = (||\mathbf{B}_i - \mathbf{B}_{nom,i}|| < \epsilon_{B, i})
-                    \end{align}
-                    $$
-                    By selecting an appropriate threshold $\epsilon_B$, the sensor is calibrated to provide high sensitivity while minimizing false positives.
-                    Overall the contact sensor weights 3.5 g and is smaller than 8.5 cm along all dimensions.
-                    <br>
-                    The collision resilient MAV takes on the form of an  icosahedron tensegrity vehicle.
-                    Tensegrity structures consist of rigid bodies suspended within a tension network;
-                    As these structures distribute external loads through tension and compression rather than bending, they are exceptionally impact-resistant.
-                    For aerial vehicles, which have fragile components like propellers and electronics that are vulnerable to collisions and whose defect results in total loss of functionality, such a tensegrity structure provides a protective shell.
-                </p><br>
-                <div class="col-md-12 col-md-offset-2">
-                    <img src="./files/colliding_drone/system_diagram.png" width="700"><br><br>
-                </div>
-                <p class="text-justify">                    
-                    The physical prototype, as seen in the picture, carries a Bitcraze Crazyflie 2.1 as a flight controller, four Little Bee 20 A ESCs and EMAX RS1106 II 4500KV motors with \(2.5\times4\) three blade propellers.
-                    Due to constraints on the \(\text{I}^2\text{C}\) bus of the crazyflie 2.1 the prototype carries only two contact sensors along the forward flight direction. 
-                </p>
-            </div><br>
+                <div style="overflow: hidden;">
+                    <div style="float: right; margin-left: 15px; margin-bottom: 15px;">
+                        <img src="./files/colliding_drone/hw_impl.png" width="460">
+                    </div>
+                    <p class="text-justify">
+                        The overall hardware prototype consists of a collision-resilient drone equipped with binary contact sensors. 
+                        The main purpose of the contact sensor is to trigger a binary signal when the respective corner of the tensegrity vehicle makes contact.
+                        It is designed for high sensitivity, contact-detection from all directions, physical robustness, and minimal weight.
+                        At the same time since we only require a binary signal there are no range or significant resolution requirements.
+                        The sensor consists of a 3D-printed housing with a compliant mechanism connected to a dome, a button magnet inside the dome, and a 3D hall-effect sensor positioned below.
+                        The compliant mechanism includes four spring-like connections between the casing and the dome, allowing displacement along all three axes while returning the dome to its original position when no external force is applied.
+                        The housing is printed using TPU material making it flexible and robust. 
+                        When in contact, the contact force displaces the dome, altering the magnetic field measured by the hall sensor from its nominal value.
+                        Therefore, the binary output for sensor is then:
+                        $$
+                        \begin{align} 
+                            \mathcal{C}_i = (||\mathbf{B}_i - \mathbf{B}_{nom,i}|| < \epsilon_{B, i})
+                        \end{align}
+                        $$
+                        By selecting an appropriate threshold $\epsilon_B$, the sensor is calibrated to provide high sensitivity while minimizing false positives.
+                        Overall the contact sensor weights 3.5 g and is smaller than 8.5 cm along all dimensions.
+                        <br>
+                        The collision resilient MAV takes on the form of an  icosahedron tensegrity vehicle.
+                        Tensegrity structures consist of rigid bodies suspended within a tension network;
+                        As these structures distribute external loads through tension and compression rather than bending, they are exceptionally impact-resistant.
+                        For aerial vehicles, which have fragile components like propellers and electronics that are vulnerable to collisions and whose defect results in total loss of functionality, such a tensegrity structure provides a protective shell.
+                    </p><br>
+                    <div class="col-md-12 col-md-offset-2">
+                        <img src="./files/colliding_drone/system_diagram.png" width="700"><br><br>
+                    </div>
+                    <p class="text-justify">                    
+                        The physical prototype, as seen in the picture, carries a Bitcraze Crazyflie 2.1 as a flight controller, four Little Bee 20 A ESCs and EMAX RS1106 II 4500KV motors with \(2.5\times4\) three blade propellers.
+                        Due to constraints on the \(\text{I}^2\text{C}\) bus of the crazyflie 2.1 the prototype carries only two contact sensors along the forward flight direction. 
+                    </p>
+                </div><br>
+            </div>
         </div>
-
 
         <div class="row">
             <div class="col-md-12 col-md-offset-0">
-                <h2><b>Results</b></h2> 
-                <p text-class="justify">
+                <h2><b>Results</b></h2><br>
+                <p class="text-justify">
                     Two scenarios are validated using Monte Carlo simulations: the first evaluates the system's ability to recover from high-speed collisions compared to non-tactile approaches, while the second assesses the reliability of the overall path-recovery procedure.
                     The figure below displays the recovery success rates for different velocities across three controllers: (1) a contact-agnostic cascading controller combined with a Kalman Filter, (2) the same estimator and low-level controller, but with the recovery maneuver introduced triggered when the accelerometer norm exceeds a threshold, and (3) the proposed approach.
                     For each velocity and controller, the Monte Carlo simulation consists of 50 trials. A recovery is considered successful if the MAV does not touch the ground during the recovery maneuver.
@@ -269,12 +275,12 @@
                             </video>
                         </div>
                         <div class="col-md-5">
-                            <img src="./files/colliding_drone/success_rate.png" height="275">
+                            <img src="./files/colliding_drone/success_rate.png" height="275"><br><br>
                         </div>
                     </div>
                 </div>
 
-                <p text-class="justify">
+                <p class="text-justify">
                     We execute the same experiments on the developed prototype. Here we achieve collision recovery at speeds up to 3.7 m / s and successfully recover the elliptical path after collision as shown in the videos below.
                 </p><br>
 
@@ -292,9 +298,8 @@
                         </div>
                     </div>
                 </div>
-                </div>
-            
             </div>
+        </div>
         <div class="row">
             <div class="col-md-12 col-md-offset-0">
                 <h3>
