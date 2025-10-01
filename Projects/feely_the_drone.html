@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>Feely The Drone</title>    
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <link rel="stylesheet" href="./files/app.css">
+    <link rel="stylesheet" href="./files/project.min.css">
+    <link rel="icon" type="image/png" href="./files/feely_the_drone/overviewFigure.png">
+</head>
+<body>
+    <div class="container" id="main">
+        <div class="row">
+            <h2 class="col-md-12 text-center">
+                <span class="pre"><b>Robust Perching via Touch:</b> Embodying Tactile Grasping on Aerial Robots&nbsp;&nbsp;&nbsp; </span>
+                <br>
+            </h2>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-10 text-center col-md-offset-1">
+                <ul class="list-inline">
+                    <li>
+                        <a href="../index.html" target="_blank">Anton Bredenbeck</a>,
+                    </li>
+                    <li>
+                        <a href="https://www.linkedin.com/in/ajadoenathmisier/" target="_blank">Anish Jadoenathmisier</a>,
+                    </li>
+                    <li>
+                        <a href="https://scholar.google.com/citations?user=O7snlrcAAAAJ&hl=en" target="_blank">
+                            Salua Hamaza
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <!-- add affiliation logos -->
+            <div class="row">
+                <div class="col-md-10 text-center col-md-offset-1">
+                    <ul class="list-inline">
+                        <li style="margin-right: 0px;">
+                            <img src="./files/TU_Delft_Logo.svg" height="45px">
+                        </li>
+                    </ul>
+                </div>
+                <!-- add affiliations with superscripts -->
+                <div class="col-md-10 text-center col-md-offset-1">
+                    <ul class="list-inline">
+                        <li>
+                            <a href="https://www.tudelft.nl/en/ai/biomorphic-intelligence-lab" target="_blank">
+                            Biomorphic Intelligence Lab
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8 text-center col-md-offset-2">
+                <ul class="nav nav-pills nav-justified">
+                    <li>
+                        <!-- ToDo add pre-print link-->
+                        <a href="ToDo.html" target="_blank">
+                        <img src="./files/colliding_drone/pre_print.png" height="60px">
+                            <h4><strong>pre-print</strong></h4>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="ToDo.html">
+                        <img src="./files/youtube_icon.png" height="60px">
+                            <h4><strong>Presentation</strong></h4>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/bioMorphic-Intelligence-Lab/feely_drone" target="_blank">
+                        <img src="./files/github.png" height="60px">
+                            <h4><strong>Code & Datasets</strong></h4>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <br><br>        
+            <div class="col-md-12 text-center col-md-offset-0">
+                <p class="text-justify" size="5">
+                    <b>TL;DR</b>: We equip a flying gripper with binary touch sensors on its phalanges. 
+                    Based on the tactile cues it can fine tune its position and orientation to align with perching targets ensuring a safe grasp.
+                </p>
+            </div>
+        </div>
+        <hr><br>
+
+        <div class="row">
+            <div class="col-md-12">
+                <h2><b>Overview</b></h2>
+                <div style="overflow: hidden;">
+                    <div style="float: left; margin-right: 15px; margin-bottom: 15px;">
+                        <img src="./files/feely_the_drone/overviewFigure.png" width="430">
+                    </div>
+                    <p class="text-justify">
+                        Aerial robots are agile and versatile but suffer from limited flight time due to battery constraints. 
+                        Perching offers a solution: by attaching to environmental structures, a robot can conserve energy while continuing to collect data. 
+                        However, existing methods often require precise target knowledge, restrictive surface properties, or vision-based approaches that fail when occlusions occur. 
+                    </p>
+                    <p class="text-justify">
+                        Inspired by nature, we present a <b>tactile-based perching method</b>. A mechanically compliant gripper with binary touch sensors 
+                        enables the drone to refine its pose during perching, adapt to different shapes, and validate its grasp before turning off its motors. 
+                        This makes perching robust to occlusions, misalignment, and noisy estimates of target position.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 col-md-offset-0">
+                <h2><b>Methods & System</b></h2><br>
+                <p class="text-justify">
+                    The system consists of a quadrotor with a three-fingered compliant gripper mounted on top. 
+                    Each finger has torsional springs for passive closing, tendon actuation for opening, and capacitive touch sensors on each phalange. 
+                    These binary signals provide feedback on contact events.
+                </p>
+                <p class="text-justify">
+                    A finite state machine (FSM) governs the perching process: from takeoff and a figure-eight search pattern, through initial contact, 
+                    approach, orientation alignment using tactile cues, grasp finalization, and passive perching. 
+                    An abort state ensures safety if errors exceed a threshold.
+                </p>
+                <div class="text-center">
+                    <img src="./files/feely_the_drone/fsm.png" width="500">
+                    <p style="font-size:0.9em"><i>Finite state machine governing the tactile perching maneuver.</i></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <h3><b>Hardware Prototype</b></h3>
+            <div>
+                <div style="float: right; margin-left: 15px; margin-bottom: 15px;">
+                    <img src="./files/feely_the_drone/hw_impl.png" width="460">
+                    <p style="font-size:1.0em"><i>The tactile gripper mounted on a quadrotor. Torsional springs ensure passive closing,<br> tendons actuate opening, and copper-foil capacitive sensors detect contact.</i></p>
+                </div>
+            </div>
+            <p class="text-justify">
+                <b>Mechanical Design:</b>
+                The gripper has three rounded finger segments connected by spring-loaded joints that naturally keep the fingers closed. Soft silicone interiors improve grip and compliance, with contact sensor interfaces mounted on top. A tendon system driven by spools allows each finger to open when actuated, while releasing the tendon makes the finger close again. All design files are available on the project page.<br>
+
+                <b>Electronics & Control</b>
+                The gripper is mounted on a SpeedyBee FS225 V2 drone frame powered by a 4S battery. A Pixracer R15 running PX4 handles flight control, while a Raspberry Pi 5 coordinates with a Teensy 4.0 to actuate the finger tendons using three servos. The Raspberry Pi also processes input from the touch sensors.<br>
+
+                <b>Contact Sensing</b>
+                Each finger is equipped with capacitive touch sensors made from copper foil and an MPR121 controller. When the fingers touch a conductive surface, the change in capacitance is detected and converted into binary contact signals for reliable touch feedback.
+            </p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 col-md-offset-0">
+                <h2><b>Experiments</b></h2><br>
+                <p class="text-justify">
+                    We validate our approach in simulation and real-world experiments. 
+                    In Monte-Carlo simulations, the tactile-based method achieved over <b>95% success rate</b> 
+                    with positional offsets up to 0.6 m and orientation offsets up to 50°. 
+                    Compared to a feed-forward baseline, tactile perching is far more robust to uncertainty. 
+                </p>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img src="./files/feely_the_drone/perching_success.png" width="650">
+                            <p style="font-size:1.0em"><i>Simulation results comparing feed-forward perching (orange) and tactile perching (blue).</i></p>
+                        </div>
+                        <div class="col-md-2" style="margin-left: 200px;">
+                            <video height="275" controls muted>
+                                <source src="./files/feely_the_drone/mc_vid.mp4" type='video/mp4'>
+                            </video>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-justify">
+                    <p class="text-justify">
+                        In hardware experiments with our prototype, the drone successfully perched in 14/14 trials across different positional and rotational offsets. 
+                        Thanks to the gripper's compliance, it adapted to a wide range of targets such as branches, beams, and even irregular objects like a traffic cone.
+                    </p>
+                </div>
+                <div class="row">
+                    <div class="col-md-8" style="margin-left: 200px;">
+                        <video height="200" controls muted>
+                            <source src="./files/feely_the_drone/PXL_20250904_180939447.mp4" type='video/mp4'>
+                        </video>
+                        <video height="200" controls muted>
+                            <source src="./files/feely_the_drone/recording_20250904_200955.mp4" type='video/mp4'>
+                        </video>
+                    </div>
+                    <div class="text-center">
+                        <img src="./files/feely_the_drone/time_series.png" width="850">
+                        <p style="font-size:1.0em"><i>Example trajectories from real-world flight trials with different initial offsets. All trials converge successfully to the target pose in a stable perch indicated by the gray circles.</i></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 col-md-offset-0">
+                <h2><b>Conclusion</b></h2><br>
+                <p class="text-justify">
+                    By integrating tactile sensing into a compliant gripper, we enable aerial robots to perch reliably in uncertain, cluttered environments. 
+                    Unlike prior methods, this approach does not require precise target knowledge and is robust to occlusions. 
+                    Results in both simulation and hardware show high success rates across a range of offsets and target types. 
+                    Future work will explore richer tactile sensing and onboard state estimation for outdoor operation.
+                </p>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-12 col-md-offset-0">
+                <h3>
+                    <b>BibTex</b>
+                </h3>
+                <div class="col-md-12 col-md-offset-2">
+                    <textarea id="bibtex" class="form-control" readonly="">
+@article{bredenbeck2026,
+    title  = {Robust Perching via Touch: Embodying Tactile Grasping on Aerial Robots},
+    author = {Bredenbeck, Anton and Jadoenathmisier, Anish and Hamaza, Salua},
+    year   = {2026}
+}</textarea>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <p class="text-justify" style="font-size:0.6em">The website template was adapted from <a href="https://jonbarron.info/mipnerf/" style="font-size:1em">John Barron</a> and <a href="http://mgharbi.com/" style="font-size:1em">Michaël Gharbi</a>.
+        </p>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const textarea = document.getElementById('bibtex');
+
+            function adjustHeight(element) {
+                element.style.height = 'auto'; // Reset height to auto to get the scrollHeight
+                element.style.height = (element.scrollHeight) + 'px'; // Set height to scrollHeight
+                element.style.overflow = 'hidden'; // Hide overflow to prevent scrollbar
+            }
+
+            // Initial adjustment
+            adjustHeight(textarea);
+        });
+    </script>
+</body>
+</html>

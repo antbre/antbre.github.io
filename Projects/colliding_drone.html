@@ -16,7 +16,10 @@
     <div class="container" id="main">
         <div class="row">
             <h2 class="col-md-12 text-center">
-                <span class="pre">A Tactile Feedback Approach to Path Recovery after High-Speed Impacts for Collision-Resilient Drones&nbsp;&nbsp;&nbsp; </span>
+                <span class="pre">
+                    <b>
+                        A Tactile Feedback Approach to Path Recovery after High-Speed Impacts for Collision-Resilient Drones&nbsp;&nbsp;&nbsp; </span>
+                    </b>
                 <br>
             </h2>
         </div>
@@ -243,8 +246,8 @@
                         As these structures distribute external loads through tension and compression rather than bending, they are exceptionally impact-resistant.
                         For aerial vehicles, which have fragile components like propellers and electronics that are vulnerable to collisions and whose defect results in total loss of functionality, such a tensegrity structure provides a protective shell.
                     </p><br>
-                    <div class="col-md-12 col-md-offset-2">
-                        <img src="./files/colliding_drone/system_diagram.png" width="700"><br><br>
+                    <div class="col-md-12 col-md-offset-1">
+                        <img src="./files/colliding_drone/system_diagram.png" width="800"><br><br>
                     </div>
                     <p class="text-justify">                    
                         The physical prototype, as seen in the picture, carries a Bitcraze Crazyflie 2.1 as a flight controller, four Little Bee 20 A ESCs and EMAX RS1106 II 4500KV motors with \(2.5\times4\) three blade propellers.
@@ -258,24 +261,145 @@
             <div class="col-md-12 col-md-offset-0">
                 <h2><b>Results</b></h2><br>
                 <p class="text-justify">
-                    Two scenarios are validated using Monte Carlo simulations: the first evaluates the system's ability to recover from high-speed collisions compared to non-tactile approaches, while the second assesses the reliability of the overall path-recovery procedure.
-                    The figure below displays the recovery success rates for different velocities across three controllers: (1) a contact-agnostic cascading controller combined with a Kalman Filter, (2) the same estimator and low-level controller, but with the recovery maneuver introduced triggered when the accelerometer norm exceeds a threshold, and (3) the proposed approach.
+                    Two general scenarios are validated using Monte Carlo simulations: the first evaluates the system's ability to recover from high-speed collisions compared to non-tactile approaches, while the second assesses the reliability of the overall path-recovery procedure.
+                    The table below displays the recovery success for different velocities across three controllers: (1) a contact-agnostic cascading controller combined with a Kalman Filter, (2) the same estimator and low-level controller, but with the recovery maneuver introduced triggered when the accelerometer norm exceeds a threshold, and (3) the proposed approach.
                     For each velocity and controller, the Monte Carlo simulation consists of 50 trials. A recovery is considered successful if the MAV does not touch the ground during the recovery maneuver.
                     In simulation, our approach achieves a 100 % success rate for collisions up to 8 m / s, outperforming both baselines. 
-                    <br><br>
+                </p>
+
+                <style>
+                    .velocity-table {
+                        border-collapse: collapse;
+                        width: 100%;
+                        max-width: 1200px;
+                        margin: 20px auto;
+                        font-family: Arial, sans-serif;
+                    }
+                </style>
+                <table class="velocity-table">
+                    <thead>
+                        <tr>
+                        <th>Velocity (m/s)</th>
+                        <th>0.5</th>
+                        <th>1.0</th>
+                        <th>1.5</th>
+                        <th>2.0</th>
+                        <th>2.5</th>
+                        <th>3.0</th>
+                        <th>3.5</th>
+                        <th>4.0</th>
+                        <th>4.5</th>
+                        <th>5.0</th>
+                        <th>5.5</th>
+                        <th>6.0</th>
+                        <th>6.5</th>
+                        <th>7.0</th>
+                        <th>7.5</th>
+                        <th>8.0</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                        <td>Collision Agnostic</td>
+                        <td>✓</td>
+                        <td>✗</td>
+                        <td>✗</td>
+                        <td>✗</td>
+                        <td>✗</td>
+                        <td>✗</td>
+                        <td>✗</td>
+                        <td>✗</td>
+                        <td>✗</td>
+                        <td>✗</td>
+                        <td>✗</td>
+                        <td>✗</td>
+                        <td>✗</td>
+                        <td>✗</td>
+                        <td>✗</td>
+                        <td>✗</td>
+                        </tr>
+                        <tr>
+                        <td>Accelerometer Based</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                        <td>✗</td>
+                        <td>✗</td>
+                        <td>✗</td>
+                        <td>✗</td>
+                        <td>✗</td>
+                        <td>✗</td>
+                        <td>✗</td>
+                        <td>✗</td>
+                        <td>✗</td>
+                        <td>✗</td>
+                        </tr>
+                        <tr>
+                        <td><strong>Ours</strong></td>
+                        <td>✓</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p class="text-justify">
                     We evaluate the replanning capability, by commanding the MAV to take off from an initial position that is randomized for each trial by uniformly sampling from within a 50 cm cube. After takeoff, the MAV is instructed to follow an elliptical path at a speed of  1 m / s. However, this path is obstructed.
                     The video below shows the flight paths for all \(250\) trials. The MAV successfully recovers from the collision in all trials. After recovery, it avoids the object when continuing along the path and avoids the obstacle on all subsequent passes of the elliptical trajectory. By incorporating the collision location into the vector field, the MAV naturally bypasses the obstacle and re-converges to the original path in each loop.
                 </p>
 
                 <div class="container">
                     <div class="row">
-                        <div class="col-md-5" style="margin-right: 150px;">
+                        <div class="col-md-5" style="margin-left: 100px;">
                             <video height="275" controls muted>
                                 <source src="./files/videos/many_3d_anim.mp4" type='video/mp4'>
                             </video>
                         </div>
-                        <div class="col-md-5">
-                            <img src="./files/colliding_drone/success_rate.png" height="275"><br><br>
+                    </div>
+                </div>
+
+                <p class="text-justify">
+                    We further evaluate this in a simulated cluttered environment akin to a forest, as well as with more challenging obstacles, e.g. concave obstacles.
+                    In the former case the drone successfully recovers from multiple collisions and reconverges to the desired path. 
+                    In the latter the drone collides multiple times with the obstacle until an escape path emerges. 
+                </p>
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img src="./files/colliding_drone/monte_carlo_recover_and_replan.png" height="400">
+                        </div>
+                        <div class="col-md-2" style="margin-left: -100px;">
+                            <video height="400" controls muted>
+                                <source src="./files/videos/Ellipse_batch.mp4" type='video/mp4'>
+                            </video>
+                        </div>
+                    </div><br><br>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img src="./files/colliding_drone/monte_carlo_concave_obstacle.png" height="400">
+                        </div>
+                        <div class="col-md-2" style="margin-left: -100px;">
+                            <video height="400" controls muted>
+                                <source src="./files/videos/Concave_batch.mp4" type='video/mp4'>
+                            </video>
                         </div>
                     </div>
                 </div>
