@@ -12,7 +12,6 @@
     <link rel="stylesheet" href="./files/project.min.css">
     <link rel="icon" type="image/png" href="./files/colliding_drone/overview_figure.png">
 
-    
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -25,9 +24,17 @@
         
         .monte-carlo-content {
             display: flex;
-            align-items: center;
+            align-items: stretch;
             gap: 20px;
             margin-bottom: 30px;
+        }
+        
+        /* Match heights for side-by-side videos */
+        .monte-carlo-video {
+            flex: 1;
+            max-width: 50%;
+            display: flex;
+            align-items: center;
         }
         
         .monte-carlo-image {
@@ -36,9 +43,9 @@
         }
         
         .monte-carlo-image img {
-            width: 80%;
+            width: 100%;
             height: auto;
-            max-width: 80%;
+            max-width: 100%;
         }
         
         .monte-carlo-video {
@@ -47,9 +54,28 @@
         }
         
         .monte-carlo-video video {
-            width: 80%;
+            width: 100%;
             height: auto;
-            max-width: 80%;
+            max-width: 100%;
+        }
+        
+        /* Single video row - centered */
+        .single-video-row {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+        }
+        
+        .single-video-row video {
+            width: 100%;
+            height: auto;
+            max-width: 600px;
+        }
+        
+        @media (max-width: 768px) {
+            .single-video-row video {
+                max-width: 100%;
+            }
         }
         
         /* Responsive adjustments - only stack on very small screens */
@@ -63,6 +89,12 @@
             .monte-carlo-video {
                 max-width: 100%;
             }
+        }
+        
+        /* Ensure videos maintain aspect ratio */
+        .monte-carlo-video video {
+            max-height: 100%;
+            object-fit: contain;
         }
     </style>
 </head>
@@ -320,16 +352,6 @@
                     For each velocity and controller, the Monte Carlo simulation consists of 50 trials. A recovery is considered successful if the MAV does not touch the ground during the recovery maneuver.
                     In simulation, our approach achieves a 100 % success rate for collisions up to 8 m / s, outperforming both baselines. 
                 </p>
-
-                <style>
-                    .velocity-table {
-                        border-collapse: collapse;
-                        width: 100%;
-                        max-width: 1200px;
-                        margin: 20px auto;
-                        font-family: Arial, sans-serif;
-                    }
-                </style>
                 <table class="velocity-table">
                     <thead>
                         <tr>
@@ -418,15 +440,12 @@
                     The video below shows the flight paths for all \(250\) trials. The MAV successfully recovers from the collision in all trials. After recovery, it avoids the object when continuing along the path and avoids the obstacle on all subsequent passes of the elliptical trajectory. By incorporating the collision location into the vector field, the MAV naturally bypasses the obstacle and re-converges to the original path in each loop.
                 </p>
 
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-5" style="margin-left: 100px;">
-                            <video height="275" controls muted>
-                                <source src="./files/videos/many_3d_anim.mp4" type='video/mp4'>
-                            </video>
-                        </div>
-                    </div>
+                <div class="single-video-row">
+                    <video controls muted>
+                        <source src="./files/videos/many_3d_anim.mp4" type='video/mp4'>
+                    </video>
                 </div>
+
 
                 <p class="text-justify">
                     We further evaluate this in a simulated cluttered environment akin to a forest, as well as with more challenging obstacles, e.g. concave obstacles.
@@ -462,22 +481,23 @@
 
                 <p class="text-justify">
                     We execute the same experiments on the developed prototype. Here we achieve collision recovery at speeds up to 3.7 m / s and successfully recover the elliptical path after collision as shown in the videos below.
-                </p><br>
+                </p><br>                
 
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-5">
-                            <video height="225" controls muted class="center">
+                <div class="monte-carlo-row">
+                    <div class="monte-carlo-content">
+                        <div class="monte-carlo-video">
+                            <video controls muted>
                                 <source src="./files/videos/high_speed_collisions.mp4" type='video/mp4'>
-                            </video> 
+                            </video>
                         </div>
-                        <div class="col-md-5">
-                            <video height="225" controls muted class="center">
+                        <div class="monte-carlo-video">
+                            <video controls muted>
                                 <source src="./files/videos/replan_topview.mp4" type='video/mp4'>
-                            </video> <br>
+                            </video>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
         <div class="row">
