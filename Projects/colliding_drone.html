@@ -11,6 +11,60 @@
     <link rel="stylesheet" href="./files/app.css">
     <link rel="stylesheet" href="./files/project.min.css">
     <link rel="icon" type="image/png" href="./files/colliding_drone/overview_figure.png">
+
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        
+        .monte-carlo-row {
+            margin-bottom: 40px;
+        }
+        
+        .monte-carlo-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .monte-carlo-image {
+            flex: 1;
+            max-width: 50%;
+        }
+        
+        .monte-carlo-image img {
+            width: 80%;
+            height: auto;
+            max-width: 80%;
+        }
+        
+        .monte-carlo-video {
+            flex: 1;
+            max-width: 50%;
+        }
+        
+        .monte-carlo-video video {
+            width: 80%;
+            height: auto;
+            max-width: 80%;
+        }
+        
+        /* Responsive adjustments - only stack on very small screens */
+        @media (max-width: 576px) {
+            .monte-carlo-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .monte-carlo-image,
+            .monte-carlo-video {
+                max-width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container" id="main">
@@ -380,24 +434,26 @@
                     In the latter the drone collides multiple times with the obstacle until an escape path emerges. 
                 </p>
 
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-6" style="margin-left: -50px; margin-top: -50px">
-                            <img src="./files/colliding_drone/monte_carlo_recover_and_replan.png" height="400">
+                <div class="monte-carlo-row">
+                    <div class="monte-carlo-content">
+                        <div class="monte-carlo-image">
+                            <img src="./files/colliding_drone/monte_carlo_recover_and_replan.png" alt="Monte Carlo Recovery and Replan">
                         </div>
-                        <div class="col-md-2" style="margin-left: -100px;">
-                            <video height="300" controls muted>
+                        <div class="monte-carlo-video">
+                            <video controls muted>
                                 <source src="./files/videos/Ellipse_batch.mp4" type='video/mp4'>
                             </video>
                         </div>
-                    </div><br><br>
+                    </div>
+                </div>
 
-                    <div class="row">
-                        <div class="col-md-6" style="margin-left: -50px; margin-top: -50px">
-                            <img src="./files/colliding_drone/monte_carlo_concave_obstacle.png" height="400">
+                <div class="monte-carlo-row">
+                    <div class="monte-carlo-content">
+                        <div class="monte-carlo-image">
+                            <img src="./files/colliding_drone/monte_carlo_concave_obstacle.png" alt="Monte Carlo Concave Obstacle">
                         </div>
-                        <div class="col-md-2" style="margin-left: -100px;">
-                            <video height="300" controls muted>
+                        <div class="monte-carlo-video">
+                            <video controls muted>
                                 <source src="./files/videos/Concave_batch.mp4" type='video/mp4'>
                             </video>
                         </div>
