@@ -11,6 +11,101 @@
     <link rel="stylesheet" href="./files/app.css">
     <link rel="stylesheet" href="./files/project.min.css">
     <link rel="icon" type="image/png" href="./files/feely_the_drone/overviewFigure.png">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        
+        .monte-carlo-row {
+            margin-bottom: 40px;
+        }
+        
+        .monte-carlo-content {
+            display: flex;
+            align-items: stretch;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        /* Match heights for side-by-side videos */
+        .monte-carlo-video {
+            flex: 1;
+            max-width: 50%;
+            display: flex;
+            align-items: center;
+        }
+        
+        .monte-carlo-image {
+            flex: 1;
+            max-width: 50%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .monte-carlo-image img {
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+            flex-grow: 1;
+            object-fit: contain;
+        }
+        
+        .monte-carlo-image p {
+            flex-shrink: 0;
+            margin-top: 10px;
+        }
+        
+        .monte-carlo-video {
+            flex: 1;
+            max-width: 50%;
+        }
+        
+        .monte-carlo-video video {
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+        }
+        
+        /* Single video row - centered */
+        .single-video-row {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+        }
+        
+        .single-video-row video {
+            width: 100%;
+            height: auto;
+            max-width: 600px;
+        }
+        
+        @media (max-width: 768px) {
+            .single-video-row video {
+                max-width: 100%;
+            }
+        }
+        
+        /* Responsive adjustments - only stack on very small screens */
+        @media (max-width: 576px) {
+            .monte-carlo-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .monte-carlo-image,
+            .monte-carlo-video {
+                max-width: 100%;
+            }
+        }
+        
+        /* Ensure videos maintain aspect ratio */
+        .monte-carlo-video video {
+            max-height: 100%;
+            object-fit: contain;
+        }
+    </style>
 </head>
 <body>
     <div class="container" id="main">
@@ -162,14 +257,14 @@
                     with positional offsets up to 0.6 m and orientation offsets up to 50°. 
                     Compared to a feed-forward baseline, tactile perching is far more robust to uncertainty. 
                 </p>
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <img src="./files/feely_the_drone/perching_success.png" width="650">
+                <div class="monte-carlo-row">
+                    <div class="monte-carlo-content">
+                        <div class="monte-carlo-image">
+                            <img src="./files/feely_the_drone/perching_success.png">
                             <p style="font-size:1.0em"><i>Simulation results comparing feed-forward perching (orange) and tactile perching (blue).</i></p>
                         </div>
-                        <div class="col-md-2" style="margin-left: 200px;">
-                            <video height="275" controls muted>
+                        <div class="monte-carlo-video">
+                            <video controls muted>
                                 <source src="./files/feely_the_drone/mc_vid.mp4" type='video/mp4'>
                             </video>
                         </div>
@@ -182,14 +277,18 @@
                         Thanks to the gripper's compliance, it adapted to a wide range of targets such as branches, beams, and even irregular objects like a traffic cone.
                     </p>
                 </div>
-                <div class="row">
-                    <div class="col-md-8" style="margin-left: 200px;">
-                        <video height="200" controls muted>
-                            <source src="./files/feely_the_drone/PXL_20250904_180939447_reduced.mp4" type='video/mp4'>
-                        </video>
-                        <video height="200" controls muted>
-                            <source src="./files/feely_the_drone/recording_20250904_200955.mp4" type='video/mp4'>
-                        </video>
+                <div class="monte-carlo-row">
+                    <div class="monte-carlo-content">
+                        <div class="monte-carlo-video">
+                            <video controls muted>
+                                <source src="./files/feely_the_drone/PXL_20250904_180939447_reduced.mp4" type='video/mp4'>
+                            </video>
+                        </div>
+                        <div class="monte-carlo-video">
+                            <video controls muted>
+                                <source src="./files/feely_the_drone/recording_20250904_200955.mp4" type='video/mp4'>
+                            </video>
+                        </div>
                     </div>
                     <div class="text-center">
                         <img src="./files/feely_the_drone/time_series.png" width="850">
