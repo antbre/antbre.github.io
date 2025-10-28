@@ -44,6 +44,23 @@
             flex-direction: column;
         }
         
+        .real-image {
+            flex: 1;
+            max-width: 80%;
+            display: flex;
+            flex-direction: column;
+            margin: 0 auto; 
+        }
+
+        .real-image img {
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+            flex-grow: 1;
+            object-fit: contain;
+        }
+        
+
         .monte-carlo-image img {
             width: 100%;
             height: auto;
@@ -96,6 +113,19 @@
             
             .monte-carlo-image,
             .monte-carlo-video {
+                max-width: 100%;
+            }
+        }
+
+        /* Responsive adjustments - only stack on very small screens */
+        @media (max-width: 800px) {
+            .real-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .real-image,
+            .real-video {
                 max-width: 100%;
             }
         }
@@ -212,10 +242,14 @@
             <div class="col-md-12 col-md-offset-0">
                 <h2><b>Methods & System</b></h2><br>
                 <p class="text-justify">
-                    The system consists of a quadrotor with a three-fingered compliant gripper mounted on top. 
+                    The system consists of a quadrotor with a three-fingered anthropomorphic hand mounted on top. 
+                    Inspired by the human hand, the gripper is mechanically compliant to passively conform to various shapes.
                     Each finger has torsional springs for passive closing, tendon actuation for opening, and capacitive touch sensors on each phalange. 
                     These binary signals provide feedback on contact events.
                 </p>
+                <div class="real-image">
+                    <img src="./files/feely_the_drone/free_body.png" width="2500">
+                </div>
                 <p class="text-justify">
                     A finite state machine (FSM) governs the perching process: from takeoff and a figure-eight search pattern, through initial contact, 
                     approach, orientation alignment using tactile cues, grasp finalization, and passive perching. 
@@ -232,7 +266,7 @@
             <h3><b>Hardware Prototype</b></h3>
             <div>
                 <div style="float: right; margin-left: 15px; margin-bottom: 15px;">
-                    <img src="./files/feely_the_drone/hw_impl.png" width="460">
+                    <img src="./files/feely_the_drone/hw_impl.png" width="550">
                     <p style="font-size:1.0em"><i>The tactile gripper mounted on a quadrotor. Torsional springs ensure passive closing,<br> tendons actuate opening, and copper-foil capacitive sensors detect contact.</i></p>
                 </div>
             </div>
@@ -290,8 +324,8 @@
                             </video>
                         </div>
                     </div>
-                    <div class="text-center">
-                        <img src="./files/feely_the_drone/time_series.png" width="850">
+                    <div class="real-image">
+                        <img src="./files/feely_the_drone/time_series.png" width="900">
                         <p style="font-size:1.0em"><i>Example trajectories from real-world flight trials with different initial offsets. All trials converge successfully to the target pose in a stable perch indicated by the gray circles.</i></p>
                     </div>
                 </div>
