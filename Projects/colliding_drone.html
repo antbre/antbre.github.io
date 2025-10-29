@@ -96,6 +96,72 @@
             max-height: 100%;
             object-fit: contain;
         }
+
+        .velocity-table {
+            margin: 0 auto;
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .velocity-table th,
+        .velocity-table td {
+            padding: 8px 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+            white-space: nowrap;
+        }
+
+        .velocity-table thead th {
+            background-color: #000000;
+            font-weight: bold;
+        }
+
+        .velocity-table tbody td:first-child {
+            text-align: left;
+            font-weight: 500;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1200px) {
+            .velocity-table th,
+            .velocity-table td {
+                padding: 6px 8px;
+                font-size: 0.9em;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .velocity-table th,
+            .velocity-table td {
+                padding: 4px 6px;
+                font-size: 0.85em;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .velocity-table {
+                font-size: 0.75em;
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .velocity-table th,
+            .velocity-table td {
+                padding: 3px 4px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .velocity-table {
+                font-size: 0.7em;
+            }
+            
+            .velocity-table th,
+            .velocity-table td {
+                padding: 2px 3px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -352,6 +418,7 @@
                     For each velocity and controller, the Monte Carlo simulation consists of 50 trials. A recovery is considered successful if the MAV does not touch the ground during the recovery maneuver.
                     In simulation, our approach achieves a 100 % success rate for collisions up to 8 m / s, outperforming both baselines. 
                 </p>
+                <br/>
                 <table class="velocity-table">
                     <thead>
                         <tr>
@@ -434,6 +501,7 @@
                         </tr>
                     </tbody>
                 </table>
+                <br/>
 
                 <p class="text-justify">
                     We evaluate the replanning capability, by commanding the MAV to take off from an initial position that is randomized for each trial by uniformly sampling from within a 50 cm cube. After takeoff, the MAV is instructed to follow an elliptical path at a speed of  1 m / s. However, this path is obstructed.
