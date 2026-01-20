@@ -7,6 +7,7 @@
 
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
     <link rel="stylesheet" href="./files/app.css">
     <link rel="stylesheet" href="./files/project.min.css">
@@ -135,6 +136,21 @@
             max-height: 100%;
             object-fit: contain;
         }
+        
+        /* 3D Model Viewer Styles */
+        model-viewer {
+            width: 100%;
+            height: 500px;
+            /* Match the page background by letting it show through */
+            background-color: transparent;
+            margin: 20px 0;
+        }
+        
+        .model-viewer-container {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+        }
     </style>
 </head>
 <body>
@@ -235,6 +251,20 @@
                         This makes perching robust to occlusions, misalignment, and noisy estimates of target position.
                     </p>
                 </div>
+                <div class="model-viewer-container">
+                    <model-viewer 
+                        src="./files/feely_the_drone/FeelyDrone.glb"
+                        alt="3D model of the Feely Drone with fully open gripper"
+                        auto-rotate
+                        camera-controls
+                        interaction-policy="allow-when-focused"
+                        ar
+                        ar-modes="webxr scene-viewer quick-look">
+                    </model-viewer>
+                </div>
+                <p class="text-center" style="font-size:0.9em">
+                    <i>Interactive 3D model of the tactile gripper mounted on the quadrotor. You can rotate and zoom to explore the design.</i>
+                </p>
             </div>
         </div>
 
