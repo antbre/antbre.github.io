@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <title>Tether-Inertial Localization for Drones on Mars</title>
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <link rel="stylesheet" href="./files/app.css">
+    <link rel="stylesheet" href="./files/project.min.css">
+    <link rel="icon" type="image/png" href="./files/tether_inertial/overview_figure.png">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        .content-image {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .content-image img {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="main">
+        <div class="row">
+            <h2 class="col-md-12 text-center">
+                <span class="pre"><b>Tether-Inertial Localization for Drones on Mars</b></span>
+                <br>
+            </h2>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-10 text-center col-md-offset-1">
+                <ul class="list-inline">
+                    <li>
+                        <a href="https://www.linkedin.com/in/dielof-van-loon-a33629161/" target="_blank">D.I. van Loon</a>
+                        <sup>1</sup>
+                    </li>
+                    <li>
+                        <a href="../index.html" target="_blank">Anton Bredenbeck</a>
+                        <sup>2</sup>
+                    </li>
+                    <li>
+                        <a href="https://www.linkedin.com/in/lennart-puck-40a829227" target="_blank">L. Puck</a>
+                        <sup>3</sup>
+                    </li>
+                    <li>
+                        <a href="https://www.linkedin.com/in/martin-azkarate-esa-robotics/" target="_blank">M. Azkarate</a>
+                        <sup>3</sup>
+                    </li>
+                    <li>
+                        <a href="https://scholar.google.com/citations?user=O7snlrcAAAAJ&hl=en" target="_blank">Salua Hamaza</a>
+                        <sup>2</sup>
+                    </li>
+                </ul>
+            </div>
+            <!-- add affiliation logos -->
+            <div class="row">
+                <div class="col-md-10 text-center col-md-offset-1">
+                    <ul class="list-inline">
+                        <li style="margin-right: 160px;">
+                            <img src="./files/TU_Delft_Logo.svg" height="45px">
+                        </li>
+                        <li>
+                            <img src="./files/tether_inertial/ESA_Patch_2025.png" height="45px">
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!-- add affiliations with superscripts -->
+            <div class="row">
+                <div class="col-md-10 text-center col-md-offset-1">
+                    <ul class="list-inline">
+                        <li>
+                            <sup>1</sup>
+                            <a href="https://www.tudelft.nl/en/me/about/departments/cognitive-robotics-cor" target="_blank">Dept. of Cognitive Robotics, TU Delft</a>
+                        </li>
+                        <li>
+                            <sup>2</sup>
+                            <a href="https://www.tudelft.nl/en/ai/biomorphic-intelligence-lab" target="_blank">Biomorphic Intelligence Laboratory, TU Delft</a>
+                        </li>
+                        <li>
+                            <sup>3</sup>
+                            <a href="https://www.esa.int/Enabling_Support/Space_Engineering_Technology/Automation_and_Robotics" target="_blank">Planetary Robotics Lab, European Space Agency</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8 text-center col-md-offset-2">
+                <ul class="nav nav-pills nav-justified">
+                    <li>
+                        <!-- ToDo add pre-print link-->
+                        <a href="./ToDo.html" target="_blank">
+                        <img src="./files/tether_inertial/pre_print.png" height="60px">
+                            <h4><strong>pre-print</strong></h4>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://youtu.be/YMYKxUlA4uo">
+                        <img src="./files/youtube_icon.png" height="60px">
+                            <h4><strong>Presentation</strong></h4>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <br><br>
+            <div class="col-md-12 text-center col-md-offset-0">
+                <p class="text-justify" size="5">
+                    <b>TL;DR</b>: We present a Tether-Inertial Localization approach that uses tether length and angle measurements to estimate the UAV pose relative to its base. The method combines an analytical catenary model with a Gaussian Process residual correction, achieving 0.049 m average RMSE with tether lengths up to 4.5 m—enabling robust position control for tethered drones in feature-sparse environments such as Mars.
+                </p>
+            </div>
+        </div>
+        <hr><br>
+
+        <div class="row">
+            <div class="col-md-12">
+                <h2><b>Overview</b></h2>
+                <div style="overflow: hidden;">
+                    <div style="float: left; margin-right: 15px; margin-bottom: 15px;">
+                        <img src="./files/tether_inertial/overview_figure.png" width="430" alt="Tether Management System with drone and rover" onerror="this.style.display='none'">
+                    </div>
+                    <p class="text-justify">
+                        Recent developments in planetary exploration have shown the potential of Unmanned Aerial Vehicles (UAVs), such as the Ingenuity helicopter on Mars, which provided valuable mapping data. However, limited payload capabilities constrain flight times and the compute available for localization, restricting applicability. One way to address these challenges is to incorporate a tether that links the UAV to a companion rover. The tether can provide continuous power, compute, and reliable communication, while its physical properties—length and angles—can be used as a source for localizing the attached UAV relative to the rover.
+                    </p>
+                    <p class="text-justify">
+                        In this work we introduce a novel <b>Tether-Inertial (TI) Localization</b> approach using a catenary model and a Gaussian Process (GP). Our system incorporates length, angle, and tension sensors to measure relevant tether state variables, enabling accurate estimation of the UAV position relative to the rover and thereby robust position control in feature-sparse environments where vision or GNSS are unreliable.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 col-md-offset-0">
+                <h2><b>Contributions</b></h2>
+                <br>
+                <ul class="text-justify">
+                    <li><b>Analytical catenary model</b> for computationally efficient estimation of the Tethered UAV (TUAV) position and its uncertainty.</li>
+                    <li><b>Gaussian Process</b> trained from pairs of tether states and residual errors, to compensate non-linear effects causing discrepancies between the analytical position estimate and ground truth.</li>
+                    <li><b>Experimental validation</b> of the Tether-Inertial Localization approach using a custom-built Tether Management System (TMS), with circular, triangular, and figure-eight trajectories, tether lengths up to 4.5 m, and 41 minutes of flight time using only tether-based position feedback.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 col-md-offset-0">
+                <h2><b>Methods</b></h2>
+                <br>
+                <p class="text-justify">
+                    The physical connection between the base and the drone generates a geometric constraint on the position of the drone: it can only be at a location consistent with the tether state. We model the tether as an idealized hanging chain (catenary), with four degrees of freedom identified by tether length, base elevation and azimuth angle, and drone elevation angle. The catenary model assumes negligible bending stiffness, uniform mass distribution, and quasi-static conditions. To capture model violations and non-linear effects under dynamic conditions, we train a Sparse Gaussian Process on the residual error between the catenary-based position estimate and ground truth, improving accuracy under real flight conditions.
+                </p>
+                <p class="text-justify">
+                    Experimental results show <b>0.073 m average RMSE</b> for the analytical catenary model alone and <b>0.049 m average RMSE</b> with GP enhancement—an order of magnitude improvement over prior tether-based localization methods—enabling precise position control for tethered drones without vision or GNSS.
+                </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 col-md-offset-0">
+                <h2><b>Conclusion</b></h2>
+                <br>
+                <p class="text-justify">
+                    By combining an efficient analytical catenary model with data-driven GP residual correction, we provide a practical localization method for Tethered Unmanned Aerial Vehicles in GNSS-denied, feature-sparse environments such as planetary surfaces. The approach is validated on a custom Tether Management System with the HolyBro QAV250 drone alongside the MaRTA rover in a Mars yard, demonstrating that tether-inertial localization can achieve accuracies sufficient for closed-loop position control and future planetary exploration missions.
+                </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 col-md-offset-0">
+                <h3><b>BibTeX</b></h3>
+                <div class="col-md-12 col-md-offset-2">
+                    <textarea id="bibtex" class="form-control" readonly="">
+@article{vanloon2026tether,
+    title  = {Tether-Inertial Localization for Drones on Mars},
+    author = {van Loon, D.I. and Bredenbeck, A. and Puck, L. and Azkarate, M. and Hamaza, S.},
+    year   = {2026},
+    note   = {Under review}
+}</textarea>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <p class="text-justify" style="font-size:0.6em">The website template was adapted from <a href="https://jonbarron.info/mipnerf/" style="font-size:1em">John Barron</a> and <a href="http://mgharbi.com/" style="font-size:1em">Michaël Gharbi</a>.
+        </p>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const textarea = document.getElementById('bibtex');
+            if (textarea) {
+                textarea.style.height = 'auto';
+                textarea.style.height = (textarea.scrollHeight) + 'px';
+                textarea.style.overflow = 'hidden';
+            }
+        });
+    </script>
+</body>
+</html>
