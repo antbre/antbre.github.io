@@ -205,7 +205,7 @@
                     <li>
                         <!-- ToDo add pre-print link-->
                         <a href="ToDo.html" target="_blank">
-                        <img src="./files/colliding_drone/pre_print.png" height="60px">
+                        <img src="./files/feely_the_drone/pre_print.png" height="60px">
                             <h4><strong>pre-print</strong></h4>
                         </a>
                     </li>
@@ -227,7 +227,7 @@
             <div class="col-md-12 text-center col-md-offset-0">
                 <p class="text-justify" size="5">
                     <b>TL;DR</b>: We equip a flying gripper with binary touch sensors on its phalanges. 
-                    Based on the tactile cues it can fine tune its position and orientation to align with perching targets ensuring a safe grasp.
+                    Based on the tactile cues it can fine tune its position and orientation to align with perching targets ensuring a safe grasp, without the need for precise target knowledge.
                 </p>
             </div>
         </div>
@@ -238,7 +238,7 @@
                 <h2><b>Overview</b></h2>
                 <div style="overflow: hidden;">
                     <div style="float: left; margin-right: 15px; margin-bottom: 15px;">
-                        <img src="./files/feely_the_drone/overviewFigure.png" width="430">
+                        <img src="./files/feely_the_drone/feely_overview.jpg" width="430">
                     </div>
                     <p class="text-justify">
                         Aerial robots are agile and versatile but suffer from limited flight time due to battery constraints. 
@@ -251,20 +251,6 @@
                         This makes perching robust to occlusions, misalignment, and noisy estimates of target position.
                     </p>
                 </div>
-                <div class="model-viewer-container">
-                    <model-viewer 
-                        src="./files/feely_the_drone/FeelyDrone.glb"
-                        alt="3D model of the Feely Drone with fully open gripper"
-                        auto-rotate
-                        camera-controls
-                        interaction-policy="allow-when-focused"
-                        ar
-                        ar-modes="webxr scene-viewer quick-look">
-                    </model-viewer>
-                </div>
-                <p class="text-center" style="font-size:0.9em">
-                    <i>Interactive 3D model of the tactile gripper mounted on the quadrotor. You can rotate and zoom to explore the design.</i>
-                </p>
             </div>
         </div>
 
@@ -277,16 +263,13 @@
                     Each finger has torsional springs for passive closing, tendon actuation for opening, and capacitive touch sensors on each phalange. 
                     These binary signals provide feedback on contact events.
                 </p>
-                <div class="real-image">
-                    <img src="./files/feely_the_drone/free_body.png" width="2500">
-                </div>
                 <p class="text-justify">
                     A finite state machine (FSM) governs the perching process: from takeoff and a figure-eight search pattern, through initial contact, 
                     approach, orientation alignment using tactile cues, grasp finalization, and passive perching. 
                     An abort state ensures safety if errors exceed a threshold.
                 </p>
                 <div class="text-center">
-                    <img src="./files/feely_the_drone/fsm.png" width="500">
+                    <img src="./files/feely_the_drone/fsm.png" width="700">
                     <p style="font-size:0.9em"><i>Finite state machine governing the tactile perching maneuver.</i></p>
                 </div>
             </div>
@@ -295,10 +278,22 @@
         <div class="row">
             <h3><b>Hardware Prototype</b></h3>
             <div>
-                <div style="float: right; margin-left: 15px; margin-bottom: 15px;">
-                    <img src="./files/feely_the_drone/hw_impl.png" width="550">
-                    <p style="font-size:1.0em"><i>The tactile gripper mounted on a quadrotor. Torsional springs ensure passive closing,<br> tendons actuate opening, and copper-foil capacitive sensors detect contact.</i></p>
+                <div class="model-viewer-container">
+                    <model-viewer 
+                        src="./files/feely_the_drone/FeelyDrone.glb"
+                        alt="3D model of the Feely Drone with fully open gripper"
+                        auto-rotate
+                        camera-controls
+                        interaction-policy="allow-when-focused"
+                        ar
+                        ar-modes="webxr scene-viewer quick-look">
+                    </model-viewer>
                 </div>
+                <p class="text-center" style="font-size:0.9em">
+                    <i>Interactive 3D model of the tactile gripper mounted on the quadrotor. You can rotate and zoom to explore the design.
+                        The tactile gripper mounted on a quadrotor. Torsional springs ensure passive closing, tendons actuate opening, and copper-foil capacitive sensors detect contact.
+                    </i>
+                </p>
             </div>
             <p class="text-justify">
                 <b>Mechanical Design:</b>
@@ -355,7 +350,7 @@
                         </div>
                     </div>
                     <div class="real-image">
-                        <img src="./files/feely_the_drone/time_series.png" width="900">
+                        <img src="./files/feely_the_drone/real_trajs.png" width="900">
                         <p style="font-size:1.0em"><i>Example trajectories from real-world flight trials with different initial offsets. All trials converge successfully to the target pose in a stable perch indicated by the gray circles.</i></p>
                     </div>
                 </div>
