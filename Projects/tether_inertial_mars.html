@@ -18,14 +18,188 @@
             padding: 20px;
         }
 
-        .content-image {
+        /* Full-width figure with caption */
+        .figure-row {
+            margin: 25px 0 35px 0;
+            text-align: center;
+        }
+
+        .figure-row img {
+            width: 100%;
+            height: auto;
             max-width: 100%;
+        }
+
+        .figure-caption {
+            font-size: 0.85em;
+            color: #ffffff;
+            text-align: justify;
+            margin-top: 8px;
+        }
+
+        /* Two figures side by side */
+        .figure-pair {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            margin: 25px 0 35px 0;
+        }
+
+        .figure-pair > div {
+            flex: 1;
+            max-width: 50%;
+        }
+
+        .figure-pair img {
+            width: 100%;
             height: auto;
         }
 
-        .content-image img {
+        /* Three figures in a row (step-by-step sequences) */
+        .figure-triple {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin: 25px 0 8px 0;
+        }
+
+        .figure-triple > div {
+            flex: 1;
+            max-width: 33.333%;
+        }
+
+        .figure-triple img {
             width: 100%;
             height: auto;
+        }
+
+        .step-label {
+            font-size: 0.85em;
+            color: #ffffff;
+            text-align: center;
+            margin-top: 6px;
+        }
+
+        @media (max-width: 768px) {
+            .figure-triple {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .figure-triple > div {
+                max-width: 100%;
+            }
+        }
+
+        /* Single video, centered */
+        .single-video-row {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0 10px 0;
+        }
+
+        .single-video-row video {
+            width: 100%;
+            height: auto;
+            max-width: 760px;
+        }
+
+        @media (max-width: 768px) {
+            .single-video-row video {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .figure-pair {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .figure-pair > div {
+                max-width: 100%;
+            }
+        }
+
+        /* LaTeX / booktabs-style tables: horizontal rules only, no fills */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 25px 0 35px 0;
+        }
+
+        .table-caption {
+            text-align: center;
+            font-size: 0.85em;
+            color: #ffffff;
+            font-variant: small-caps;
+            letter-spacing: 0.03em;
+            margin-bottom: 10px;
+        }
+
+        .booktabs {
+            margin: 0 auto;
+            border-collapse: collapse;
+            background: transparent;
+            color: #ffffff;
+            font-size: 0.92em;
+        }
+
+        .booktabs th,
+        .booktabs td {
+            padding: 5px 16px;
+            text-align: center;
+            border: none;
+            background: transparent;
+            white-space: nowrap;
+        }
+
+        .booktabs th {
+            font-weight: normal;
+            font-variant: small-caps;
+        }
+
+        /* \toprule */
+        .booktabs thead tr:first-child th {
+            border-top: 2px solid #ffffff;
+        }
+
+        /* \midrule */
+        .booktabs thead tr:last-child th {
+            border-bottom: 1px solid #ffffff;
+        }
+
+        /* \midrule inside the body */
+        .booktabs tbody tr.rule-above > * {
+            border-top: 1px solid #ffffff;
+        }
+
+        /* \bottomrule */
+        .booktabs tbody tr:last-child > * {
+            border-bottom: 2px solid #ffffff;
+        }
+
+        .booktabs td:first-child,
+        .booktabs th:first-child {
+            text-align: left;
+        }
+
+        .booktabs td.num,
+        .booktabs th.num {
+            text-align: right;
+        }
+
+        @media (max-width: 992px) {
+            .booktabs th,
+            .booktabs td {
+                padding: 4px 8px;
+                font-size: 0.85em;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .booktabs {
+                font-size: 0.75em;
+            }
         }
     </style>
 </head>
@@ -33,7 +207,7 @@
     <div class="container" id="main">
         <div class="row">
             <h2 class="col-md-12 text-center">
-                <span class="pre"><b>Tether-Inertial Localization for Drones on Mars</b></span>
+                <span class="pre"><b>Tether-Inertial Localization for Planetary Drones</b></span>
                 <br>
             </h2>
         </div>
@@ -117,7 +291,7 @@
             <br><br>
             <div class="col-md-12 text-center col-md-offset-0">
                 <p class="text-justify" size="5">
-                    <b>TL;DR</b>: We present a Tether-Inertial Localization approach that uses tether length and angle measurements to estimate the UAV pose relative to its base. The method combines an analytical catenary model with a Gaussian Process residual correction, achieving 0.049 m average RMSE with tether lengths up to 4.5 m—enabling robust position control for tethered drones in feature-sparse environments such as Mars.
+                    <b>TL;DR</b>: We localize a tethered drone from the tether itself. Length, angle, and tension sensors in a custom Tether Management System feed a closed-form catenary model that returns the drone position relative to its base — plus an analytical uncertainty derived from the sensor noise. A variance-gated Gaussian Process removes the residual error left by the model's assumptions. Across 37 minutes of closed-loop flight with tethers up to 4.5 m, this achieves 7.4 cm RMSE from the analytical model alone and 5.2 cm with the GP, an order of magnitude better than the state of the art, and accurate enough to fly on tether feedback alone in feature-sparse environments such as planetary surfaces.
                 </p>
             </div>
         </div>
@@ -128,13 +302,16 @@
                 <h2><b>Overview</b></h2>
                 <div style="overflow: hidden;">
                     <div style="float: left; margin-right: 15px; margin-bottom: 15px;">
-                        <img src="./files/tether_inertial/overview_figure.png" width="430" alt="Tether Management System with drone and rover" onerror="this.style.display='none'">
+                        <img src="./files/tether_inertial/overview_figure.jpg" width="430" alt="Tether Management System with the QAV250 drone next to the rover in the ESA Mars yard">
                     </div>
                     <p class="text-justify">
-                        Recent developments in planetary exploration have shown the potential of Unmanned Aerial Vehicles (UAVs), such as the Ingenuity helicopter on Mars, which provided valuable mapping data. However, limited payload capabilities constrain flight times and the compute available for localization, restricting applicability. One way to address these challenges is to incorporate a tether that links the UAV to a companion rover. The tether can provide continuous power, compute, and reliable communication, while its physical properties—length and angles—can be used as a source for localizing the attached UAV relative to the rover.
+                        Aerial robots substantially extend what a planetary exploration mission can reach: they detect distant objects beyond the horizon, relay communication, and collect data from a mobile, elevated sensing platform. The Ingenuity helicopter proved the concept on Mars across 72 missions — and also exposed its limits. Its mission ended in a crash caused by insufficient features for its vision-based localization system, and its flight time was throughout constrained by a strict payload budget that caps both battery capacity and the compute available for onboard image processing.
                     </p>
                     <p class="text-justify">
-                        In this work we introduce a novel <b>Tether-Inertial (TI) Localization</b> approach using a catenary model and a Gaussian Process (GP). Our system incorporates length, angle, and tension sensors to measure relevant tether state variables, enabling accurate estimation of the UAV position relative to the rover and thereby robust position control in feature-sparse environments where vision or GNSS are unreliable.
+                        A tether to a companion rover removes both constraints at once: it supplies continuous power, offboard computation, and a reliable communication link, extending flight duration and enabling far more computationally demanding tasks. Tethered UAVs (TUAVs) are commercially available, but a significant gap remains — none of them exploit the <i>physical properties of the tether</i> as a source of localization.
+                    </p>
+                    <p class="text-justify">
+                        In this work we introduce a <b>Tether-Inertial (TI) Localization</b> approach that closes that gap. The tether is a geometric constraint: given its length and its departure and arrival angles, the drone can only occupy positions consistent with the current tether configuration. We measure those state variables with a custom-built Tether Management System (TMS), invert an analytical catenary model to obtain the drone position in closed form, and train a Gaussian Process on the residual error to compensate for the effects the idealized model cannot capture. The result is a non-drifting position estimate that is accurate enough to serve as the sole position feedback in closed-loop flight, in environments where GNSS is unavailable and visual-inertial odometry struggles for lack of features.
                     </p>
                 </div>
             </div>
@@ -145,23 +322,272 @@
                 <h2><b>Contributions</b></h2>
                 <br>
                 <ul class="text-justify">
-                    <li><b>Analytical catenary model</b> for computationally efficient estimation of the Tethered UAV (TUAV) position and its uncertainty.</li>
-                    <li><b>Gaussian Process</b> trained from pairs of tether states and residual errors, to compensate non-linear effects causing discrepancies between the analytical position estimate and ground truth.</li>
-                    <li><b>Experimental validation</b> of the Tether-Inertial Localization approach using a custom-built Tether Management System (TMS), with circular, triangular, and figure-eight trajectories, tether lengths up to 4.5 m, and 41 minutes of flight time using only tether-based position feedback.</li>
+                    <li>A <b>tether-inertial localization approach</b> that provides a non-drifting position estimate together with its <i>analytically computed uncertainty</i>, derived from the tether measurements.</li>
+                    <li>A <b>variance-gated Gaussian Process</b>, trained on pairs of tether states and residual errors, that compensates localization errors while preserving the analytical accuracy guarantees.</li>
+                    <li>A <b>comprehensive experimental validation</b> of the approach on a custom-built Tether Management System, in closed-loop flight in ESA's Planetary Robotics Lab.</li>
                 </ul>
+                <br>
+                <p class="text-justify">
+                    To the best of our knowledge, this is the first work to demonstrate closed-loop tether-based localization of a TUAV with sub-10 cm accuracy and variable tether lengths, enabling precise positioning over a large volume using only the tether-based estimate.
+                </p>
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-12 col-md-offset-0">
-                <h2><b>Methods</b></h2>
-                <br>
+                <h2><b>Methods</b></h2><br>
+
+                <h3><b>Catenary Model</b></h3><br>
+
                 <p class="text-justify">
-                    The physical connection between the base and the drone generates a geometric constraint on the position of the drone: it can only be at a location consistent with the tether state. We model the tether as an idealized hanging chain (catenary), with four degrees of freedom identified by tether length, base elevation and azimuth angle, and drone elevation angle. The catenary model assumes negligible bending stiffness, uniform mass distribution, and quasi-static conditions. To capture model violations and non-linear effects under dynamic conditions, we train a Sparse Gaussian Process on the residual error between the catenary-based position estimate and ground truth, improving accuracy under real flight conditions.
+                    We model the tether as an idealized hanging chain — a catenary — which rests on three assumptions: the tether has negligible bending stiffness and negligible extensibility relative to its overall length, it has a uniform mass distribution, and it hangs between exactly two points in a uniform gravitational field. Note that these assumptions extend naturally to lower-gravity environments, as long as the gravitational field is uniform.
+                </p>
+                <div class="figure-row">
+                    <img src="./files/tether_inertial/catenary_model.png" alt="3D visualization of the catenary problem" style="max-width: 620px;">
+                    <p class="figure-caption" style="max-width: 620px; margin-left: auto; margin-right: auto;">
+                        3D visualization of the catenary problem showing the state variables \(\beta_o\), \(\beta_d\), \(\alpha_o\) and \(L\): the elevation angles at the origin and at the drone, the azimuth angle at the origin around the z-axis, and the tether length, respectively.
+                    </p>
+                </div>
+                <p class="text-justify">
+                    The catenary has four degrees of freedom and therefore requires four independent measurements for unique identification: we use the tether length \(L\), the base elevation angle \(\beta_o\), the base azimuth angle \(\alpha_o\), and the drone elevation angle \(\beta_d\). For readability, and without loss of generality, we treat the problem as planar. Within that plane the catenary curve relates the radial (horizontal) distance \(r\) to the vertical axis as
+                    $$
+                    \begin{align}
+                        z(r) = a \cosh\left(\frac{r-b}{a}\right) + c,
+                    \end{align}
+                    $$
+                    where \(a\), \(b\) and \(c\) define the curvature and position of the curve. At each timestep, these unknown parameters and the drone's radial distance \(r_d\) are determined from the sensor measurements through four constraints: the curve passes through the origin, its slope matches the measured elevation angle at the origin and at the drone, and its arc length equals the measured tether length,
+                    $$
+                    \begin{align}
+                        z(0) &= 0, \qquad
+                        \left.\frac{dz}{dr}\right|_{r=0} = \tan\beta_o, \qquad
+                        \left.\frac{dz}{dr}\right|_{r=r_d} = \tan\beta_d,\\
+                        L &= \int_0^{r_d}\sqrt{1 + (z'(r))^2}\,dr.
+                    \end{align}
+                    $$
+                    Taking the derivative of the curve, substituting it into the arc-length integral, and integrating from \(0\) to \(r_d\) yields \(L = a(\tan\beta_d - \tan\beta_o)\), which provides \(a\) in terms of known variables. The remaining parameters follow directly:
+                    $$
+                    \begin{align}
+                        a &= \frac{L}{\tan\beta_d - \tan\beta_o}, & b &= -a\sinh^{-1}(\tan\beta_o),\\
+                        c &= -a\cosh\left(\frac{b}{a}\right), & r_d &= b + a\sinh^{-1}(\tan\beta_d).
+                    \end{align}
+                    $$
+                </p>
+                <div class="single-video-row">
+                    <video autoplay muted loop playsinline onmouseover="this.pause()" onmouseout="this.play()">
+                        <source src="./files/videos/catenary_2d.mp4" type='video/mp4'>
+                    </video>
+                </div>
+                <p class="figure-caption" style="max-width: 760px; margin: 0 auto 35px auto;">
+                    The planar catenary solve. Sweeping the measured inputs \(\beta_o\), \(\beta_d\) and \(L\) traces out the corresponding tether curve, and with it the drone position \((x, y)\) at its far end. Every combination of the three measurements admits exactly one curve &mdash; which is what makes the position recoverable from the tether alone.
                 </p>
                 <p class="text-justify">
-                    Experimental results show <b>0.073 m average RMSE</b> for the analytical catenary model alone and <b>0.049 m average RMSE</b> with GP enhancement—an order of magnitude improvement over prior tether-based localization methods—enabling precise position control for tethered drones without vision or GNSS.
+                    Rotating the planar solution by the azimuth angle \(\alpha_o\) finally gives the full 3D position of the drone:
+                    $$
+                    \begin{align}
+                        x_d = r_d\cos\alpha_o, \qquad y_d = r_d\sin\alpha_o, \qquad z_d = a\cosh\left(\frac{r_d - b}{a}\right) + c.
+                    \end{align}
+                    $$
+                    This closed-form solution enables real-time computation with minimal computational overhead — an important property for the compute-constrained platforms typical of planetary exploration.
                 </p>
+                <div class="single-video-row">
+                    <video autoplay muted loop playsinline onmouseover="this.pause()" onmouseout="this.play()">
+                        <source src="./files/videos/catenary_3d.mp4" type='video/mp4'>
+                    </video>
+                </div>
+                <p class="figure-caption" style="max-width: 760px; margin: 0 auto 35px auto;">
+                    The same curve in 3D. The planar solution is swept around the z-axis by the base azimuth angle \(\varphi = \alpha_o\), which places the drone anywhere in the volume reachable by the tether. Varying \(\beta_o\), \(\beta_d\) and \(L\) reshapes the curve within that plane.
+                </p>
+
+                <h3><b>Model Uncertainty</b></h3><br>
+
+                <p class="text-justify">
+                    Because the catenary algorithm is a closed-form solution, its accuracy depends directly on the measurement uncertainty of the variables that feed into it. By propagating the sensor noise through the model we can predict the impact of this error on the aleatoric uncertainty of the position estimate. We derive the partial derivatives of \(x_d, y_d, z_d\) with respect to each input variable analytically (see the paper for the full expressions) and assemble them into the Jacobian \(\mathbf{J}\) of the estimation output with respect to the sensor input. The output covariance then follows as
+                    $$
+                    \begin{align}
+                        \mathbf{\Sigma}_{\text{output}} = \mathbf{J}\,\mathbf{\Sigma}_{\text{input}}\,\mathbf{J}^\top .
+                    \end{align}
+                    $$
+                    Intuitively, these expressions show that in close proximity to the base the length measurement dominates the uncertainty, whereas at large tether lengths the angle measurements contribute more. Empirically, the predicted and observed error distributions overlap closely across all three axes, with only a small bias underestimating the height. This lets us provide confidence intervals for the position estimate and integrate it seamlessly into conventional estimator frameworks.
+                </p>
+                <div class="figure-row">
+                    <img src="./files/tether_inertial/error_distributions.png" alt="Empirically observed and predicted error distributions">
+                    <p class="figure-caption">
+                        Empirically observed (blue) and predicted (grey) error distributions across 3000 samples for all estimation axes. The distributions clearly overlap, with only minor offsets in the \(z\)-axis, demonstrating the accuracy of our uncertainty prediction.
+                    </p>
+                </div>
+
+                <h3><b>GP-Based Residual Error Compensation</b></h3><br>
+
+                <p class="text-justify">
+                    In practice, tether stiffness, friction in the system, sensor noise, and other non-linear effects introduce discrepancies with respect to the idealized model. To capture them, we collect ground truth positions via Motion Capture alongside the tether sensor data and train a Sparse Gaussian Process to predict the residual error. The input vector consists of the tether-localized position and the tether state, \(\begin{bmatrix} x_d & y_d & z_d & \alpha_o & \beta_o & \beta_d & L\end{bmatrix}^\top\), and the 3-dimensional output is the residual \(\mathbf{e}_d = \begin{bmatrix} x_{gt} - x_d & y_{gt} - y_d & z_{gt} - z_d\end{bmatrix}^\top\). This describes a purely geometric relationship, which makes the residual estimate transferable across different gravitational regimes — just like the analytical model itself.
+                </p>
+                <div class="figure-triple">
+                    <div>
+                        <img src="./files/tether_inertial/gp_analytical_only.png" alt="Analytical tether model prediction versus the actual drone position">
+                        <p class="step-label">(a) the analytical prediction</p>
+                    </div>
+                    <div>
+                        <img src="./files/tether_inertial/gp_error_vector.png" alt="The residual error vector between prediction and ground truth">
+                        <p class="step-label">(b) the residual \(\vec{\epsilon}_{gt}\)</p>
+                    </div>
+                    <div>
+                        <img src="./files/tether_inertial/gp_gp_and_analytical.png" alt="The GP prediction of the residual closing most of the gap">
+                        <p class="step-label">(c) the GP correction</p>
+                    </div>
+                </div>
+                <p class="figure-caption">
+                    What the GP actually learns. (a) The catenary model places the drone at the end of the tether curve, but the idealizing assumptions leave it offset from the actual position. (b) That offset is the residual \(\vec{\epsilon}_{gt}\) &mdash; the quantity we regress on, given the tether state. (c) Adding the GP's predicted residual to the analytical estimate moves it most of the way onto the true position.
+                </p>
+                <p class="text-justify">
+                    Training uses 150k data points from 30 flights with MoCap in the loop; of 30 test flights, 25 with diverse trajectories are used for training and five for testing. Because GPs scale poorly, the training data is sparsified using K-means clustering, and the GP is trained with the Adam optimizer against the Evidence Lower Bound. An ablation over the number of inducing points and training epochs showed that RMSE grows with more inducing points due to overfitting; since inference time also scales quadratically with them, we selected the model with 300 inducing points, which both performs best and offers the lowest inference time.
+                </p>
+                <p class="text-justify">
+                    A crucial detail is that we do not trust the GP blindly. We use the variance of the Gaussian output to judge whether the current state lies within the training regime, and scale the correction down — or disable it entirely — when it does not. Concretely, we combine the GP output and the tether-localized position convexly:
+                    $$
+                    \begin{align}
+                        \mathbf{x}_{d,comp} &= \mathbf{x}_d + \lambda\,\mathbf{e}_d,\\
+                        \text{where}\quad \lambda &= 1 - \frac{\texttt{clamp}(\sigma_{\text{GP}}, \sigma_{\min}, \sigma_{\max}) - \sigma_{\min}}{\sigma_{\max} - \sigma_{\min}},
+                    \end{align}
+                    $$
+                    with \(\sigma_{\text{GP}}\) the variance of the GP output and the thresholds set empirically to \(\sigma_{\min} = 0.015\,\)m and \(\sigma_{\max} = 0.065\,\)m. These correspond to the 10th and 90th percentiles of the localization error observed for the standalone tether-based estimator, i.e. they define best- and worst-case performance baselines. The GP correction is applied fully when its predictive uncertainty falls below \(\sigma_{\min}\), and is discarded once it exceeds \(\sigma_{\max}\) — indicating lower reliability than the worst observed baseline. This gives hard safety guarantees and makes it possible to test the GP inside the closed-loop localization pipeline.
+                </p>
+                <div class="single-video-row">
+                    <video autoplay muted loop playsinline onmouseover="this.pause()" onmouseout="this.play()">
+                        <source src="./files/videos/gp_variance_scaling.mp4" type='video/mp4'>
+                    </video>
+                </div>
+                <p class="figure-caption" style="max-width: 760px; margin: 0 auto 35px auto;">
+                    Variance-based scaling of the residual correction. The shaded disc is the GP's own predictive uncertainty. When it is small the correction is trusted and applied in full, pulling the estimate onto the true position; as the uncertainty grows the correction is faded out, until at 100% the estimate falls back entirely onto the analytical catenary prediction. The GP can therefore only ever help &mdash; in unfamiliar tether states it defers to the model whose accuracy is analytically bounded.
+                </p>
+
+                <h3><b>Tether Management System</b></h3><br>
+
+                <p class="text-justify">
+                    The TMS fulfills two functions: collecting the tether state variables \((\alpha_o, \beta_o, \beta_d, L)\) required for localization, and managing tether length and tension to prevent entanglement while preserving drone mobility. Since the precision of its fabrication directly determines the position uncertainty, the design targets low sensor uncertainty throughout.
+                </p>
+                <div class="figure-row">
+                    <img src="./files/tether_inertial/tms_closeup.png" alt="Close-up of the Tether Management System with labelled components" style="max-width: 760px;">
+                    <p class="figure-caption" style="max-width: 760px; margin-left: auto; margin-right: auto;">
+                        The Tether Management System. Components 1 &amp; 2 are the drone and platform angle sensors, 3 is the tension sensor, 4 is the length sensor, and 5 is the tether drum. The tether is shown in yellow.
+                    </p>
+                </div>
+                <p class="text-justify">
+                    <b>Angle sensors (1, 2).</b> Both sensors employ a two-axis gimbal design with low-friction potentiometers on each axis, measuring elevation and azimuth of the tether relative to the drone and platform vertical axes. The platform-mounted sensor lets the tether traverse both rotation axes before entering the TMS; to reduce friction at low angles — when the tether lies almost horizontal — the design incorporates small rollers mounted on metal pins. Both sensors are calibrated by taking orthographic pictures in-line with the axis while moving the tether in the axis plane, which yields a linear fit between sensor values and tether angles. Using the drone's attitude from its IMU, the system compensates the sensed tether angle so that the output is always with respect to the horizon.
+                </p>
+                <p class="text-justify">
+                    <b>Length sensor (4).</b> A dual-roller system in which the upper roller connects to a rotary encoder and the lower roller operates on a spring-actuated shaft. Two lateral springs create a pinching force against the upper roller, preventing slippage and ensuring accurate length measurement. The design also functions as a guide pulley, directing the tether from the variable tension sensor position to the fixed drum location. Calibration measures dispensed tether length with a laser rangefinder while recording the corresponding encoder values.
+                </p>
+                <p class="text-justify">
+                    <b>Tension control (3, 5).</b> Maintaining constant tension is what keeps the catenary assumption valid: it prevents buckling, looping, or ground contact while avoiding an overly taut elastic link, and it keeps the angle sensors aligned with the true cable direction. The tether drum assembly (5) uses a stepper motor-driven system with a self-reversing leadscrew mechanism, which distributes the tether uniformly across the drum width. The tension sensor (3) is a spring-actuated arm that pivots around a lower axis with its upper end connected to a spring; as tension increases the arm rotates downward, and the angular displacement is measured via a potentiometer, calibrated against a spring balance across 0–6 N. A PD controller holds the tension at 3.5 N, using a low-pass filter for noise attenuation and a quadratic proportional term — reduced sensitivity for small deviations (&lt; 1 N) and enhanced responsiveness above:
+                    $$
+                    \begin{align}
+                        \omega = k_P(\tau_s - \tau)\,|\tau_s - \tau| - k_D\dot{\tau},
+                    \end{align}
+                    $$
+                    where \(\omega\) is the motor speed, \(\tau_s\) and \(\tau\) are the tension setpoint and value, and \(k_P, k_D\) the gains. This prevents oscillations while ensuring rapid response to significant tension changes. Note that the additional tension needs to be compensated by the UAV to maintain its position; in our case this is simply treated as an external disturbance, to be rejected by the position controller.
+                </p>
+                <div class="figure-row">
+                    <img src="./files/tether_inertial/tension_control.png" alt="Tether tension during triangular and circular flights" style="max-width: 620px;">
+                    <p class="figure-caption" style="max-width: 620px; margin-left: auto; margin-right: auto;">
+                        The tether tension for a triangular and a circular flight experiment, and its reference value \(\tau_s\). The controller tracks the setpoint without causing large oscillations, staying within the reactivity threshold of \(\pm 1\,\)N. The inflection points of the triangular flights can be seen causing extremes in tension.
+                    </p>
+                </div>
+                <p class="text-justify">
+                    <b>System integration.</b> The tether is a highly flexible silicone-insulated cable (22 kg/km density) — light enough to approximate the catenary assumptions, yet with sufficient mass to overcome sensor friction. From the measured static angle sensor friction of 0.029 N per sensor axis we derive a required lower bound of 15 g/m, which the chosen tether satisfies. The mechanical framework uses 20 mm aluminium extrusions with wooden platforms supporting all sensor components. Control electronics include an Arduino for motor control and sensor interfacing, and a Raspberry Pi 5 with a dedicated ADC for angle sensor acquisition and ROS communication. The drone carries a Raspberry Pi 3A as a companion computer, interfacing with both the PX4 autopilot and an onboard ADC for angle sensor data. The flight controller consumes the tether-based estimate and fuses it with the IMU via an Extended Kalman Filter to obtain high-frequency state estimates.
+                </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 col-md-offset-0">
+                <h2><b>Results</b></h2><br>
+
+                <p class="text-justify">
+                    We evaluated the approach in the Planetary Robotics Lab at ESA's ESTEC, using the custom TMS and a HolyBro QAV250 quadrotor. A VICON motion capture system provides ground truth, which constrains the operational height to approximately 4.5 m due to camera coverage. Importantly, <b>MoCap is used only for ground truth comparison</b> — the drone's position feedback is supplied solely by our tether-inertial localization framework, and all results shown are the raw results before merging with the inertial odometry in the drone's EKF.
+                </p>
+                <div class="figure-row">
+                    <img src="./files/tether_inertial/catenary_on_platform.jpg" alt="The catenary state variables annotated on the real platform and drone in the lab" style="max-width: 860px;">
+                    <p class="figure-caption" style="max-width: 860px; margin-left: auto; margin-right: auto;">
+                        A localization experiment in the Planetary Robotics Lab at ESA's ESTEC, with the catenary curve and its state variables drawn on the real setup: the anchor point \(o\) on the Tether Management System, the drone \(d\) at the far end of the tether, the elevation angles \(\beta_o\) and \(\beta_d\) at either end, and the tether length \(L\) along the curve.
+                    </p>
+                </div>
+                <p class="text-justify">
+                    The experimental campaign comprises 17 closed-loop flight missions totaling 37 minutes of flight data across three trajectory geometries — circular, triangular, and figure-eight — at three altitude configurations: 2 m height with 1.5 m characteristic dimension, 3.5 m height with 2.5 m characteristic dimension, and 2 m height with 1.5 m characteristic dimension on a sinusoidal altitude profile. The tether's maximum length varies between 3 m and 4.5 m for the different sizes. Each mission follows a standardized protocol: vertical takeoff to the target altitude, autonomous execution of the prescribed trajectory at 0.2 m/s, then descent back onto the platform. Of the 17 flights, 11 use the tether-inertial localization and 6 the GP-enhanced variant.
+                </p>
+
+                <div class="single-video-row">
+                    <video controls muted loop playsinline>
+                        <source src="./files/videos/tethered_drone_flight.mp4" type='video/mp4'>
+                    </video>
+                </div>
+                <p class="figure-caption" style="max-width: 760px; margin: 0 auto 35px auto;">
+                    A closed-loop flight in the Planetary Robotics Lab. The drone takes off from the Tether Management System, follows the prescribed trajectory, and lands back on the platform &mdash; with the tether-inertial estimate serving as the only source of position feedback.
+                </p>
+                <div class="table-wrap">
+                    <p class="table-caption">
+                        Table I &mdash; Localization performance across trajectories and estimation modes (tether-inertial (TI) and GP). Average, worst, and best performances are bold in the last column. RMSEs for trials with comparable characteristics from related works are included for comparison.
+                    </p>
+                    <table class="booktabs">
+                        <thead>
+                            <tr>
+                                <th>Shape</th>
+                                <th class="num">Size (m)</th>
+                                <th>Source</th>
+                                <th class="num">n<sub>flights</sub></th>
+                                <th class="num">Duration (min)</th>
+                                <th class="num">RMSE (m)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>All</td><td class="num">All</td><td>TI</td><td class="num">11</td><td class="num">25.0</td><td class="num"><b>0.0744</b></td></tr>
+                            <tr><td>All</td><td class="num">All</td><td>GP</td><td class="num">6</td><td class="num">11.8</td><td class="num"><b>0.0518</b></td></tr>
+
+                            <tr class="rule-above"><td>Circle</td><td class="num">1.5</td><td>TI</td><td class="num">4</td><td class="num">8.45</td><td class="num">0.0598</td></tr>
+                            <tr><td>Circle</td><td class="num">2.5</td><td>TI</td><td class="num">3</td><td class="num">7.5</td><td class="num"><b>0.0927</b></td></tr>
+                            <tr><td>Circle</td><td class="num">1.5</td><td>GP</td><td class="num">1</td><td class="num">1.8</td><td class="num">0.0416</td></tr>
+                            <tr><td>Circle</td><td class="num">2.5</td><td>GP</td><td class="num">1</td><td class="num">2.0</td><td class="num">0.0649</td></tr>
+                            <tr><td>Triangle</td><td class="num">1.5</td><td>TI</td><td class="num">1</td><td class="num">2.3</td><td class="num">0.0544</td></tr>
+                            <tr><td>Triangle</td><td class="num">2.5</td><td>TI</td><td class="num">2</td><td class="num">4.5</td><td class="num">0.0787</td></tr>
+                            <tr><td>Triangle</td><td class="num">1.5</td><td>GP</td><td class="num">1</td><td class="num">2.3</td><td class="num"><b>0.0217</b></td></tr>
+                            <tr><td>Triangle</td><td class="num">2.5</td><td>GP</td><td class="num">1</td><td class="num">2.6</td><td class="num">0.0572</td></tr>
+                            <tr><td>Eight</td><td class="num">1.5</td><td>GP</td><td class="num">2</td><td class="num">3.2</td><td class="num">0.0566</td></tr>
+                            <tr><td>Circle (sinus. alt.)</td><td class="num">1.5</td><td>TI</td><td class="num">1</td><td class="num">2.3</td><td class="num">0.0738</td></tr>
+
+                            <tr class="rule-above"><td>Xiao <i>et al.</i></td><td colspan="4"></td><td class="num">0.37</td></tr>
+                            <tr><td>Borgese <i>et al.</i></td><td colspan="4"></td><td class="num">0.66</td></tr>
+                            <tr><td>Lima <i>et al.</i></td><td colspan="4"></td><td class="num">1.1</td></tr>
+                            <tr><td>Rico <i>et al.</i></td><td colspan="4"></td><td class="num">0.95</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p class="text-justify">
+                    Across all experiments, tether-inertial position estimation achieves accuracies below 10 cm. Performance is better for trajectories with smaller characteristic dimensions, which follows directly from the uncertainty propagation: the uncertainty scales linearly with the tether length \(L\), which in turn grows with the characteristic dimension. The GP improves performance across all trials, achieving RMSEs down to 2.2 cm. Overall, going from tether-inertial localization (0.0744 m RMSE) to the GP-enhanced system (0.0518 m RMSE) represents a <b>30.3% decrease in RMSE</b>, and an order of magnitude better performance than previous works — up to ten times better RMSE accuracy, outperforming the state of the art by at least a factor of four in all cases.
+                </p>
+                <div class="figure-row">
+                    <img src="./files/tether_inertial/error_magnitude.png" alt="Positional error magnitude with and without GP compensation" style="max-width: 620px;">
+                    <p class="figure-caption" style="max-width: 620px; margin-left: auto; margin-right: auto;">
+                        The magnitude of the positional error using tether localization and the GP-compensated error, during a circular flight experiment at 2 m height. At \(t \approx 58\,\)s and \(t \approx 78\,\)s the GP compensates for large spikes in the raw tether-inertial estimate. The second spike marks a trajectory inflection point, where the UAV reverses toward the origin and induces tether behavior unmodelled by the analytical model, but well compensated by the GP.
+                    </p>
+                </div>
+                <p class="text-justify">
+                    Looking at where in the workspace the error occurs, we observe error-prone regions concentrated at large positive \(x\) and \(y\) positions — especially clear for the larger flights, where the angle sensors deviate in the positive XY direction and sometimes cause errors of up to 0.30 m. This points to a biased systematic error on one side of the angle sensor.
+                </p>
+                <div class="figure-row">
+                    <img src="./files/tether_inertial/error_voxel.png" alt="Top-down view of average error per 10 cm voxel" style="max-width: 700px;">
+                    <p class="figure-caption" style="max-width: 700px; margin-left: auto; margin-right: auto;">
+                        A top-down view of the average error for every 0.10 m square around the origin (white). Left is the average error for flights of 1.5 m characteristic dimension, right for flights with a 2 m dimension. Empty areas indicate that there are no samples in the voxel.
+                    </p>
+                </div>
+                <p class="text-justify">
+                    Finally, some tether configurations introduce genuine difficulties for state estimation. Notable deviations from the ground truth occur primarily at trajectory inflection points, which is particularly evident in the triangular pattern following sharp corners. Two factors cause this: excitation of the tether dynamics, and the low bandwidth of the tether tension controller. At inflection points the inertia of the tether makes it diverge from the quasi-static assumption of the catenary model, while the tension controller requires a minimum amount of time to re-converge to the appropriate tension. In this transient phase, overcoming the angle sensor friction becomes increasingly difficult as tether tension drops — the end of the angle sensor acts as a new anchor point until the friction can be overcome. The figure-eight trajectory exhibits the most challenging dynamics, requiring two rapid reductions in tether length per cycle, where tension drops below the 3.5 N setpoint and momentarily degrades angle sensor accuracy as the tether goes slack.
+                </p>
+                <div class="figure-row">
+                    <img src="./files/tether_inertial/flight_path_error.png" alt="Flight paths coloured by position error">
+                    <p class="figure-caption">
+                        Examples of the different flight shapes used in the experiments. The tether-localized position is plotted in color according to the position error w.r.t. the ground truth flight path, which is plotted in white. We conduct experiments with triangular, circular, figure-eight, and sinusoidal height profile trajectories.
+                    </p>
+                </div>
             </div>
         </div>
 
@@ -170,7 +596,10 @@
                 <h2><b>Conclusion</b></h2>
                 <br>
                 <p class="text-justify">
-                    By combining an efficient analytical catenary model with data-driven GP residual correction, we provide a practical localization method for Tethered Unmanned Aerial Vehicles in GNSS-denied, feature-sparse environments such as planetary surfaces. The approach is validated on a custom Tether Management System with the HolyBro QAV250 drone alongside the MaRTA rover in a Mars yard, demonstrating that tether-inertial localization can achieve accuracies sufficient for closed-loop position control and future planetary exploration missions.
+                    This work presents a drone–rover tether-inertial localization pipeline with centimeter-level positioning accuracy. In GNSS-denied environments, or wherever other methods such as visual-inertial odometry struggle, it offers a reliable alternative: a computationally efficient analytical catenary model paired with Gaussian Process error compensation, giving accurate real-time and non-drifting localization together with uncertainty guarantees derived from the sensor accuracies. Experimental validation over 25 minutes of flight demonstrated an average RMSE of 0.0744 m for the analytical model, reduced by 30.3% to 0.0518 m over 12 additional minutes with the variance-gated GP. This accuracy of approximately 5 cm represents an order-of-magnitude improvement over existing TUAV localization methods and enables autonomous flight in feature-sparse environments such as planetary surfaces.
+                </p>
+                <p class="text-justify">
+                    In future work we intend to extend the estimation methodology to also infer the <i>heading</i> of the TUAV, using an orthogonal angle sensor at the anchor point, and to incorporate a tether dynamic model together with a GP with higher-order inputs to provide estimates of the UAV velocities and improve accuracy in highly dynamic regimes. We also aim to integrate the approach into a mobile rover with active feed-forward tether control, enabling the drone and TMS to cooperatively regulate tether length and avoid dynamic tether transients. Combined with space-grade sensors allowing operation at higher altitudes and larger tether lengths, this will create a robust rover–drone system suitable for challenging planetary exploration tasks.
                 </p>
             </div>
         </div>
@@ -181,11 +610,15 @@
                 <div class="col-md-12 col-md-offset-2">
                     <textarea id="bibtex" class="form-control" readonly="">
 @article{vanloon2026tether,
-    title  = {Tether-Inertial Localization for Drones on Mars},
-    author = {van Loon, D.I. and Bredenbeck, A. and Puck, L. and Azkarate, M. and Hamaza, S.},
-    year   = {2026},
-    journal = {IEEE Robotics and Automation Letters (RA-L)},
-    note   = {In press}
+    title   = {Tether-Inertial Localization for Planetary Drones},
+    author  = {van Loon, Dielof and Bredenbeck, Anton and Puck, Lennart
+               and Azkarate, Martin and Hamaza, Salua},
+    journal = {IEEE Robotics and Automation Letters},
+    volume  = {},
+    number  = {},
+    pages   = {},
+    year    = {2026},
+    publisher = {IEEE}
 }</textarea>
                 </div>
             </div>
