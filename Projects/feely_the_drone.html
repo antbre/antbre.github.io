@@ -2,154 +2,343 @@
 <html>
 <head lang="en">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    
-    <title>Feely The Drone</title>    
+
+    <title>Aerial Tactile Perching</title>
 
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                macros: {
+                    vect: ["\\boldsymbol{\\mathbf{#1}}", 1]
+                }
+            }
+        };
+    </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
     <link rel="stylesheet" href="./files/app.css">
     <link rel="stylesheet" href="./files/project.min.css">
-    <link rel="icon" type="image/png" href="./files/feely_the_drone/overviewFigure.png">
+    <link rel="icon" type="image/png" href="./files/feely_the_drone/favicon.png">
 
     <style>
         body {
             font-family: Arial, sans-serif;
             padding: 20px;
         }
-        
-        .monte-carlo-row {
-            margin-bottom: 40px;
+
+        /* State names in the text: monospace, but otherwise ordinary body text.
+           Undoes the pink-on-pink boxed <code> styling from the base stylesheet. */
+        code {
+            font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+            font-size: 0.95em;
+            color: inherit;
+            background: none;
+            background-color: transparent;
+            padding: 0;
+            border: none;
+            border-radius: 0;
         }
-        
-        .monte-carlo-content {
+
+        /* Full-width figure with caption */
+        .figure-row {
+            margin: 25px 0 35px 0;
+            text-align: center;
+        }
+
+        .figure-row img {
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+            border-radius: 10px;
+        }
+
+        .figure-caption {
+            font-size: 0.85em;
+            color: #ffffff;
+            text-align: justify;
+            margin-top: 8px;
+        }
+
+        /* Two figures side by side */
+        .figure-pair {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            margin: 25px 0 35px 0;
+        }
+
+        .figure-pair > div {
+            flex: 1;
+            max-width: 50%;
+        }
+
+        .figure-pair img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        /* Widths proportional to the aspect ratio, so paired figures render
+           at exactly the same height at any container width. */
+        .figure-pair > div.ar {
+            flex-grow: var(--ar);
+            flex-basis: 0;
+            max-width: none;
+        }
+
+        /* Two trial tables and the time series, laid out as in the paper:
+           (a) on the left, (b) top right, (c) below it. */
+        .table-figure {
             display: flex;
             align-items: stretch;
-            gap: 20px;
-            margin-bottom: 30px;
+            gap: 24px;
+            margin: 25px 0 8px 0;
         }
-        
-        /* Match heights for side-by-side videos */
-        .monte-carlo-video {
-            flex: 1;
-            max-width: 50%;
-            display: flex;
-            align-items: center;
-        }
-        
-        .monte-carlo-image {
-            flex: 1;
-            max-width: 50%;
+
+        .table-figure > .tf-left,
+        .table-figure > .tf-right {
+            flex: 1 1 0;
+            min-width: 0;
             display: flex;
             flex-direction: column;
         }
-        
-        .real-image {
-            flex: 1;
-            max-width: 80%;
+
+        /* Let the taller right column set the height, then stretch the rows of
+           the cylinder table to fill it, so both columns end flush. */
+        .tf-left > .table-wrap {
+            flex: 1 1 auto;
             display: flex;
             flex-direction: column;
-            margin: 0 auto; 
         }
 
-        .real-image img {
-            width: 100%;
-            height: auto;
-            max-width: 100%;
-            flex-grow: 1;
-            object-fit: contain;
+        .tf-left > .table-wrap > .booktabs.trials {
+            flex: 1 1 auto;
+            height: 100%;
         }
-        
 
-        .monte-carlo-image img {
+        .tf-figure {
+            margin-top: 18px;
+        }
+
+        .tf-figure img {
             width: 100%;
             height: auto;
+            border-radius: 10px;
+        }
+
+        .table-figure .table-wrap {
+            margin: 0;
+        }
+
+        /* First column of the trial tables: group name over a sketch of the setup */
+        .booktabs.trials td.grp {
+            text-align: center;
+            padding: 8px 10px;
+            white-space: normal;
+            line-height: 1.25;
+            width: 1%;
+        }
+
+        .booktabs.trials td.grp img {
+            display: block;
+            width: 92px;
             max-width: 100%;
-            flex-grow: 1;
-            object-fit: contain;
-        }
-        
-        .monte-carlo-image p {
-            flex-shrink: 0;
-            margin-top: 10px;
-        }
-        
-        .monte-carlo-video {
-            flex: 1;
-            max-width: 50%;
-        }
-        
-        .monte-carlo-video video {
-            width: 100%;
             height: auto;
-            max-width: 100%;
+            margin: 4px auto 0 auto;
         }
-        
-        /* Single video row - centered */
+
+        /* The paper centres every data column */
+        .booktabs.trials th,
+        .booktabs.trials td,
+        .booktabs.trials th.num,
+        .booktabs.trials td.num {
+            padding: 4px 10px;
+            text-align: center;
+        }
+
+        /* \bottomrule. It has to sit on the table itself: the last row does not
+           contain the rowspanned group cell, so a row border would stop short
+           of the first column. */
+        .booktabs.trials {
+            border-bottom: 2px solid #ffffff;
+        }
+
+        .booktabs.trials tbody tr:last-child > * {
+            border-bottom: none;
+        }
+
+        @media (max-width: 992px) {
+            .table-figure {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .tf-figure {
+                max-width: 620px;
+                margin: 18px auto 0 auto;
+            }
+
+            .booktabs.trials td.grp img {
+                width: 72px;
+            }
+        }
+
+        .step-label {
+            font-size: 0.85em;
+            color: #ffffff;
+            text-align: center;
+            margin-top: 6px;
+        }
+
+        /* Single video, centered */
         .single-video-row {
             display: flex;
             justify-content: center;
-            margin: 30px 0;
+            margin: 30px 0 10px 0;
         }
-        
+
         .single-video-row video {
             width: 100%;
             height: auto;
-            max-width: 600px;
+            max-width: 760px;
+            border-radius: 10px;
         }
-        
+
+        /* Two videos side by side */
+        .video-pair {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            margin: 30px 0 10px 0;
+        }
+
+        .video-pair > div {
+            flex: 1;
+            max-width: 50%;
+        }
+
+        .video-pair video {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
         @media (max-width: 768px) {
             .single-video-row video {
                 max-width: 100%;
             }
         }
-        
-        /* Responsive adjustments - only stack on very small screens */
+
         @media (max-width: 576px) {
-            .monte-carlo-content {
+            .figure-pair,
+            .video-pair {
                 flex-direction: column;
                 gap: 15px;
             }
-            
-            .monte-carlo-image,
-            .monte-carlo-video {
+
+            .figure-pair > div,
+            .figure-pair > div.ar,
+            .video-pair > div {
+                flex: 1 1 auto;
                 max-width: 100%;
             }
         }
 
-        /* Responsive adjustments - only stack on very small screens */
-        @media (max-width: 800px) {
-            .real-content {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .real-image,
-            .real-video {
-                max-width: 100%;
-            }
-        }
-        
-        /* Ensure videos maintain aspect ratio */
-        .monte-carlo-video video {
-            max-height: 100%;
-            object-fit: contain;
-        }
-        
-        /* 3D Model Viewer Styles */
+        /* 3D model viewer */
         model-viewer {
             width: 100%;
             height: 500px;
-            /* Match the page background by letting it show through */
             background-color: transparent;
             margin: 20px 0;
         }
-        
+
         .model-viewer-container {
             display: flex;
             justify-content: center;
-            margin: 30px 0;
+            margin: 30px 0 0 0;
+        }
+
+        /* LaTeX / booktabs-style tables: horizontal rules only, no fills */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 25px 0 35px 0;
+        }
+
+        .table-caption {
+            text-align: center;
+            font-size: 0.85em;
+            color: #ffffff;
+            font-variant: small-caps;
+            letter-spacing: 0.03em;
+            margin-bottom: 10px;
+        }
+
+        .booktabs {
+            margin: 0 auto;
+            border-collapse: collapse;
+            background: transparent;
+            color: #ffffff;
+            font-size: 0.92em;
+        }
+
+        .booktabs th,
+        .booktabs td {
+            padding: 5px 16px;
+            text-align: center;
+            border: none;
+            background: transparent;
+            white-space: nowrap;
+        }
+
+        .booktabs th {
+            font-weight: normal;
+            font-variant: small-caps;
+        }
+
+        /* \toprule */
+        .booktabs thead tr:first-child th {
+            border-top: 2px solid #ffffff;
+        }
+
+        /* \midrule */
+        .booktabs thead tr:last-child th {
+            border-bottom: 1px solid #ffffff;
+        }
+
+        /* \midrule inside the body */
+        .booktabs tbody tr.rule-above > * {
+            border-top: 1px solid #ffffff;
+        }
+
+        /* \bottomrule */
+        .booktabs tbody tr:last-child > * {
+            border-bottom: 2px solid #ffffff;
+        }
+
+        .booktabs td:first-child,
+        .booktabs th:first-child {
+            text-align: left;
+        }
+
+        .booktabs td.num,
+        .booktabs th.num {
+            text-align: right;
+        }
+
+        @media (max-width: 992px) {
+            .booktabs th,
+            .booktabs td {
+                padding: 4px 8px;
+                font-size: 0.85em;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .booktabs {
+                font-size: 0.75em;
+            }
         }
     </style>
 </head>
@@ -157,7 +346,7 @@
     <div class="container" id="main">
         <div class="row">
             <h2 class="col-md-12 text-center">
-                <span class="pre"><b>Robust Perching via Touch:</b> Embodying Tactile Grasping on Aerial Robots&nbsp;&nbsp;&nbsp; </span>
+                <span class="pre"><b>Aerial Tactile Perching</b> via an Anthropomorphic Hand with Embodied Soft Tactile Receptors</span>
                 <br>
             </h2>
         </div>
@@ -206,15 +395,15 @@
                         <!-- ToDo add pre-print link-->
                         <a href="ToDo.html" target="_blank">
                         <img src="./files/feely_the_drone/pre_print.png" height="60px">
-                            <h4><strong>pre-print</strong></h4>
+                            <h4><strong>paper</strong></h4>
                         </a>
                     </li>
-                    <li>
+                    <!--<li>
                         <a href="ToDo.html">
                         <img src="./files/youtube_icon.png" height="60px">
                             <h4><strong>Presentation</strong></h4>
                         </a>
-                    </li>
+                    </li>-->
                     <li>
                         <a href="https://github.com/bioMorphic-Intelligence-Lab/feely_drone" target="_blank">
                         <img src="./files/github.png" height="60px">
@@ -223,11 +412,10 @@
                     </li>
                 </ul>
             </div>
-            <br><br>        
+            <br><br>
             <div class="col-md-12 text-center col-md-offset-0">
                 <p class="text-justify" size="5">
-                    <b>TL;DR</b>: We equip a flying gripper with binary touch sensors on its phalanges. 
-                    Based on the tactile cues it can fine tune its position and orientation to align with perching targets ensuring a safe grasp, without the need for precise target knowledge.
+                    <b>TL;DR</b>: We let a drone perch by touch. A compliant, passively closing anthropomorphic hand carries nine binary tactile pads on its phalanges, and a state machine turns those contacts into pose corrections: the drone searches around a rough target estimate, exploits the first contact to localize the structure, aligns position and yaw from the contact pattern, and validates the grasp before switching off its motors. In simulation this perches with a success rate above 99&nbsp;% for position errors up to 0.6&nbsp;m, yaw errors up to 60&deg;, target inclinations up to 45&deg;, and target radii up to 0.15&nbsp;m &mdash; where a feed-forward baseline without touch is confined to roughly 0.1&nbsp;m. On hardware, all 26 flight trials perched successfully on cylindrical and T-bar targets despite deliberately corrupted pose estimates, and the perch itself consumes no energy at all.
                 </p>
             </div>
         </div>
@@ -237,18 +425,17 @@
             <div class="col-md-12">
                 <h2><b>Overview</b></h2>
                 <div style="overflow: hidden;">
-                    <div style="float: left; margin-right: 15px; margin-bottom: 15px;">
-                        <img src="./files/feely_the_drone/feely_overview.jpg" width="430">
+                    <div style="float: left; margin-right: 20px; margin-bottom: 15px;">
+                        <img src="./files/feely_the_drone/feely_overview.jpg" width="400" alt="Biological inspiration, design, and prototype of the tactile flying gripper" style="border-radius: 10px;">
                     </div>
                     <p class="text-justify">
-                        Aerial robots are agile and versatile but suffer from limited flight time due to battery constraints. 
-                        Perching offers a solution: by attaching to environmental structures, a robot can conserve energy while continuing to collect data. 
-                        However, existing methods often require precise target knowledge, restrictive surface properties, or vision-based approaches that fail when occlusions occur. 
+                        Aerial robots are agile and versatile, but their endurance is poor: even under ideal conditions most micro aerial vehicles (MAVs) sustain flight for only tens of minutes. Perching &mdash; attaching to a structure and resting there with minimal power &mdash; removes that limit for tasks such as long-horizon environmental monitoring.
                     </p>
                     <p class="text-justify">
-                        Inspired by nature, we present a <b>tactile-based perching method</b>. A mechanically compliant gripper with binary touch sensors 
-                        enables the drone to refine its pose during perching, adapt to different shapes, and validate its grasp before turning off its motors. 
-                        This makes perching robust to occlusions, misalignment, and noisy estimates of target position.
+                        Existing perching mechanisms, however, buy their reliability with strong assumptions. Claws, bistable elements, latches, and geometry-specific grippers need the target pose to be known in advance and tracked precisely during the approach; adhesive, suction, and magnetic solutions additionally constrain surface cleanliness, smoothness, or material. Vision-based pipelines close the loop, but are trained on a specific set of objects and lose the target the moment it is occluded &mdash; often by the gripper itself during the final approach. None of these mechanisms reports whether contact was actually established, leaving the controller blind at exactly the moment of capture.
+                    </p>
+                    <p class="text-justify">
+                        Biology does not work this way: perching animals use touch and bodily compliance to adjust posture and grasp against whatever they land on. We follow that principle with an <b>aerial tactile perching</b> framework. A compliant anthropomorphic hand with soft, sensorized phalanges is mounted on an MAV, and tactile feedback is used continuously &mdash; to find the structure, to refine the relative pose during the approach, and to certify the grasp before the motors are cut. Closing the loop directly in task space makes perching vision-free and tolerant of substantial misalignment and of previously unseen target geometries.
                     </p>
                 </div>
             </div>
@@ -256,30 +443,40 @@
 
         <div class="row">
             <div class="col-md-12 col-md-offset-0">
-                <h2><b>Methods & System</b></h2><br>
-                <p class="text-justify">
-                    The system consists of a quadrotor with a three-fingered anthropomorphic hand mounted on top. 
-                    Inspired by the human hand, the gripper is mechanically compliant to passively conform to various shapes.
-                    Each finger has torsional springs for passive closing, tendon actuation for opening, and capacitive touch sensors on each phalange. 
-                    These binary signals provide feedback on contact events.
-                </p>
-                <p class="text-justify">
-                    A finite state machine (FSM) governs the perching process: from takeoff and a figure-eight search pattern, through initial contact, 
-                    approach, orientation alignment using tactile cues, grasp finalization, and passive perching. 
-                    An abort state ensures safety if errors exceed a threshold.
-                </p>
-                <div class="text-center">
-                    <img src="./files/feely_the_drone/fsm.png" width="700">
-                    <p style="font-size:0.9em"><i>Finite state machine governing the tactile perching maneuver.</i></p>
-                </div>
+                <h2><b>Contributions</b></h2>
+                <br>
+                <ul class="text-justify">
+                    <li>A <b>compliant anthropomorphic hand</b> with soft tactile pads acting as sensorized phalanges, providing both environmental perception and passive adaptation to diverse structures &mdash; while closing passively, so that a perch costs no energy.</li>
+                    <li>An <b>aerial tactile perching framework</b> that continuously refines the MAV pose during the maneuver using embodied tactile feedback, starting from nothing but a rough estimate of where the target is.</li>
+                    <li>A <b>tactile grasp-validation strategy</b> that confirms secure attachment before the perch is finalized, enabling reliable, energy-free resting.</li>
+                </ul>
             </div>
         </div>
 
         <div class="row">
-            <h3><b>Hardware Prototype</b></h3>
-            <div>
+            <div class="col-md-12 col-md-offset-0">
+                <h2><b>The Hand</b></h2><br>
+
+                <p class="text-justify">
+                    An MAV spends nearly all of its energy on propulsion, so every gram of payload costs flight time. The hand therefore has to hold the vehicle's full weight with minimal actuation, minimal power, and minimal mass. Each of the three fingers is a chain of three rounded phalanges on revolute joints, following the human anatomical pattern in which the proximal segment is longest &mdash; a morphology that evolved in primates for suspensory and climbing behaviors. Torsional springs at each joint set the nominal posture to <i>closed</i>, so the grasp is held without any actuation; a single tendon per finger, routed to a lightweight spool, opens it against those springs. A soft silicone interior supplies friction and compliance at the contact surface.
+                </p>
+                <div class="figure-pair">
+                    <div class="ar" style="--ar: 99;">
+                        <img src="./files/feely_the_drone/prototype.png" alt="The prototype hanging passively from a tree branch">
+                        <p class="step-label">The prototype, perched</p>
+                    </div>
+                    <div class="ar" style="--ar: 65;">
+                        <img src="./files/feely_the_drone/finger_exploded.png" alt="Exploded view and cross-section of a single finger">
+                        <p class="step-label">One finger, exploded</p>
+                    </div>
+                </div>
+                <p class="figure-caption">
+                    Left: the prototype, mounted on a 4-inch quad frame, hanging passively from a branch with its motors off. Three fingers in an antagonistic configuration carry nine tactile sensors \(\mathcal{C}_1\) to \(\mathcal{C}_9\), one at the center of each phalanx. Right: a single finger in exploded view and cross-section &mdash; rigid link, torsional spring, tendon, soft friction pad, and the touch sensor on top of it.
+                </p>
+
+                <h3><b>Interactive 3D Model</b></h3>
                 <div class="model-viewer-container">
-                    <model-viewer 
+                    <model-viewer
                         src="./files/feely_the_drone/FeelyDrone.glb"
                         alt="3D model of the Feely Drone with fully open gripper"
                         auto-rotate
@@ -289,71 +486,290 @@
                         ar-modes="webxr scene-viewer quick-look">
                     </model-viewer>
                 </div>
-                <p class="text-center" style="font-size:0.9em">
-                    <i>Interactive 3D model of the tactile gripper mounted on the quadrotor. You can rotate and zoom to explore the design.
-                        The tactile gripper mounted on a quadrotor. Torsional springs ensure passive closing, tendons actuate opening, and copper-foil capacitive sensors detect contact.
-                    </i>
+                <p class="figure-caption" style="text-align: center; margin-bottom: 35px;">
+                    The tactile hand mounted on the quadrotor &mdash; rotate and zoom to explore the design. Torsional springs ensure passive closing, tendons actuate opening, and copper-foil capacitive pads detect contact. All design files are available in the project repository.
+                </p>
+
+                <h3><b>Sensing Touch</b></h3><br>
+                <p class="text-justify">
+                    Each pad is a copper-foil patch cast just beneath the surface of an EcoFlex-30 semi-ellipsoid, glued onto a 3D-printed PLA backbone and wired to an MPR121 capacitive sensing controller at the base of the MAV. Touching a conductive object makes the object part of the capacitor and lowers the measured value; thresholding that deviation from the nominal capacitance yields a robust binary contact signal \(\mathcal{C}_i\) per phalanx. The distal phalanx carries foil on both its front and back, so contact is detected whether it occurs inside or outside the grasp.
+                </p>
+                <div class="figure-row">
+                    <img src="./files/feely_the_drone/contact_signals.png" alt="Raw capacitive values and the resulting binary contact signals" style="max-width: 820px;">
+                    <p class="figure-caption" style="max-width: 820px; margin-left: auto; margin-right: auto;">
+                        From raw capacitance to touch. The lower plot shows the raw values of all nine pads during a trial; thresholding their deviation from the nominal value gives the binary contact pattern above, which is what the state machine reacts to.
+                    </p>
+                </div>
+                <p class="text-justify">
+                    A binary contact signal is only useful if we know <i>where</i> on the hand it originated. Because the fingers are underactuated, that position depends on the current tendon tension. We recover it from the steady state of each finger: modeling finger \(j\) as a kinematic chain governed by the manipulator equations and assuming quasi-static motion (\(\ddot{\vect{\xi}}_j \approx 0\), \(\dot{\vect{\xi}}_j \approx 0\)) without external forces, its configuration satisfies
+                    $$
+                    \begin{align}
+                        \vect{G}_{j,\mathcal{E}}(\vect{\xi}_j, {}^\mathcal{W}\vect{\Omega}_\mathcal{B})
+                        + \vect{K}_{j,\mathcal{E}}(\vect{\xi}_j - \vect{\xi}_{j,0})
+                        = \vect{A}_{j,\mathcal{E}}\,\tau_{j,\mathcal{E}},
+                    \end{align}
+                    $$
+                    with \(\vect{G}\) the gravity contribution, \(\vect{K}\) the joint stiffness, \(\vect{\xi}_{j,0}\) the nominal (closed) configuration, and \(\tau_{j,\mathcal{E}}\) the tendon tension. The gravity term makes this nonlinear, so we solve it numerically with Newton's method &mdash; a handful of iterations suffice. Forward kinematics on the resulting configuration then places every sensing pad in the body frame \(\mathcal{B}\), which turns an active sensor into a contact <i>location</i> the vehicle can steer towards.
                 </p>
             </div>
-            <p class="text-justify">
-                <b>Mechanical Design:</b>
-                The gripper has three rounded finger segments connected by spring-loaded joints that naturally keep the fingers closed. Soft silicone interiors improve grip and compliance, with contact sensor interfaces mounted on top. A tendon system driven by spools allows each finger to open when actuated, while releasing the tendon makes the finger close again. All design files are available on the project page.<br>
-
-                <b>Electronics & Control</b>
-                The gripper is mounted on a SpeedyBee FS225 V2 drone frame powered by a 4S battery. A Pixracer R15 running PX4 handles flight control, while a Raspberry Pi 5 coordinates with a Teensy 4.0 to actuate the finger tendons using three servos. The Raspberry Pi also processes input from the touch sensors.<br>
-
-                <b>Contact Sensing</b>
-                Each finger is equipped with capacitive touch sensors made from copper foil and an MPR121 controller. When the fingers touch a conductive surface, the change in capacitance is detected and converted into binary contact signals for reliable touch feedback.
-            </p>
         </div>
 
         <div class="row">
             <div class="col-md-12 col-md-offset-0">
-                <h2><b>Experiments</b></h2><br>
+                <h2><b>Perching by Touch</b></h2><br>
+
                 <p class="text-justify">
-                    We validate our approach in simulation and real-world experiments. 
-                    In Monte-Carlo simulations, the tactile-based method achieved over <b>95% success rate</b> 
-                    with positional offsets up to 0.6 m and orientation offsets up to 50°. 
-                    Compared to a feed-forward baseline, tactile perching is far more robust to uncertainty. 
+                    The maneuver is orchestrated by a finite state machine that takes the MAV from a possibly wrong initial target estimate to a validated perch. It rests on three assumptions: <b>A.1</b> the initial estimate lies in the vicinity of the true target pose, <b>A.2</b> the target's characteristic diameter fits within the gripper, and <b>A.3</b> the area around the estimate is free of obstacles other than the target itself.
                 </p>
-                <div class="monte-carlo-row">
-                    <div class="monte-carlo-content">
-                        <div class="monte-carlo-image">
-                            <img src="./files/feely_the_drone/perching_success.png">
-                            <p style="font-size:1.0em"><i>Simulation results comparing feed-forward perching (orange) and tactile perching (blue).</i></p>
-                        </div>
-                        <div class="monte-carlo-video">
-                            <video controls muted>
-                                <source src="./files/feely_the_drone/mc_vid.mp4" type='video/mp4'>
-                            </video>
-                        </div>
+                <div class="figure-pair">
+                    <div class="ar" style="--ar: 458;">
+                        <img src="./files/feely_the_drone/fsm.png" alt="Finite state machine governing the tactile perching maneuver">
+                        <p class="step-label">The state machine</p>
+                    </div>
+                    <div class="ar" style="--ar: 711;">
+                        <img src="./files/feely_the_drone/perching_sequence.png" alt="The six phases of the perching maneuver on the physical prototype">
+                        <p class="step-label">The resulting behavior on hardware</p>
                     </div>
                 </div>
+                <p class="figure-caption">
+                    State machine and resulting procedure. Left: transitions are driven purely by contact events and pose convergence. Right: the corresponding behavior of the physical prototype &mdash; (1) an uncertain target pose estimate, (2) approach and search pattern, (3) first contact, (4) tactile alignment, (5) compliant grasp and grasp validation, (6) a stable perch with the motors off.
+                </p>
+                <p class="text-justify">
+                    In <code>TAKEOFF</code> the MAV climbs to a hover above the origin. In <code>SEARCH</code> it follows a vector field \(\vect{g}(\vect{p}_\mathcal{B}, \vect{p}_{\mathcal{T},0}, t)\) around the initial estimate while a second command \(\vect{s}\) slowly opens and closes the fingers, so that the hand reaches its widest opening at the apexes of the pattern &mdash; this enlarges the swept volume and with it the chance of a touch. The first contact triggers <code>TOUCHED</code>, where the MAV uses the contact location to form an initial target estimate and retreats below and away from it with the hand fully open. <code>APPROACH</code> and <code>POSITION</code> then bring the vehicle underneath and onto the estimate.
+                </p>
+                <p class="text-justify">
+                    <code>ROTATE</code> is where the tactile alignment happens: the fingers close incrementally to provoke contact, fingers that report contact stop closing, and the MAV yaws away from them until the contact disappears, applying small lateral corrections when contact is unilateral. Because the closing commands increase monotonically &mdash; fingers never reopen &mdash; the process is guaranteed to converge to a fully closed grasp. Once every finger reports consistent contact, <code>FINALIZE</code> drives all fingers closed and validates the grasp by checking that all bottom pads are active and the tendon tensions have equalized. Only then does the MAV enter the terminal <code>PERCHED</code> state and turn off its motors. From any state, a tracking error beyond \(\epsilon_\mathrm{abort}\) sends the vehicle to <code>ABORT</code>, from which it re-enters the search.
+                </p>
+                <p class="text-justify">
+                    Deliberate contact also disturbs the vehicle. Rather than controlling interaction forces, we bound the approach velocity so that the worst-case disturbance stays within what the attitude controller can reject. For contact at maximum moment arm \(r_{\max}\) with the velocity aligned to the contact normal,
+                    $$
+                    \begin{align}
+                        \tau_{\max} \approx r_{\max}\,\frac{m v}{\Delta t},
+                    \end{align}
+                    $$
+                    with \(m\) the vehicle mass and \(\Delta t\) the impact duration. Keeping \(\tau_{\max}\) below the controller's rejectable torque yields a search velocity of \(1.0\,\)m/s; the compliance of the fingers makes this bound conservative in practice.
+                </p>
 
-                <div class="text-justify">
-                    <p class="text-justify">
-                        In hardware experiments with our prototype, the drone successfully perched in 14/14 trials across different positional and rotational offsets. 
-                        Thanks to the gripper's compliance, it adapted to a wide range of targets such as branches, beams, and even irregular objects like a traffic cone.
+                <h3><b>Choosing a Search Pattern</b></h3><br>
+                <p class="text-justify">
+                    Finding the target is a coverage-path problem, and the pattern trades mean time-to-contact against tolerance to large pose uncertainty. A larger pattern finds targets further from the estimate but takes longer, so the pattern should be matched to the expected uncertainty. We compare a sinusoidal, a spiral, and a square raster scan. The sinusoidal pattern is a smooth, dynamically feasible approximation of the optimal boustrophedonic (zigzag) sweep: unlike the square raster it covers the interior of the region rather than its perimeter, and unlike the spiral &mdash; which revisits intermediate radii and reaches large offsets slowly &mdash; it expands outward quickly. We therefore adopt the sinusoidal pattern, executed as a height-stepping figure-eight that gains altitude after each completed cycle.
+                </p>
+                <div class="figure-row">
+                    <img src="./files/feely_the_drone/search_patterns.png" alt="Sinusoidal, spiral, and square raster search patterns" style="max-width: 820px;">
+                    <p class="figure-caption" style="max-width: 820px; margin-left: auto; margin-right: auto;">
+                        The three search patterns considered: sinusoidal (left), spiral (middle), and square raster scan (right). Each represents a different trade-off between coverage efficiency and robustness to pose uncertainty.
                     </p>
                 </div>
-                <div class="monte-carlo-row">
-                    <div class="monte-carlo-content">
-                        <div class="monte-carlo-video">
-                            <video controls muted>
-                                <source src="./files/feely_the_drone/PXL_20250904_180939447_reduced.mp4" type='video/mp4'>
-                            </video>
-                        </div>
-                        <div class="monte-carlo-video">
-                            <video controls muted>
-                                <source src="./files/feely_the_drone/recording_20250904_200955.mp4" type='video/mp4'>
-                            </video>
-                        </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 col-md-offset-0">
+                <h2><b>Results</b></h2><br>
+
+                <h3><b>Robustness in Simulation</b></h3><br>
+                <p class="text-justify">
+                    We quantify robustness with a Monte-Carlo study in the Genesis simulator, which builds a dynamic model from the URDF of the MAV and the gripper; we add tendon actuation and joint stiffness on top, and feed the cascaded position, attitude, and rate controllers noisy measurements matching a motion capture system (\(\sigma = 2\,\)cm in position, \(1^\circ\) in orientation). Each configuration is run for 100 trials, with the MAV starting from a uniformly sampled position over a \(2\,\mathrm{m} \times 2\,\mathrm{m}\) area. The baseline is a feed-forward strategy that approaches the initial estimate from below and closes the hand on arrival, using no feedback at all.
+                </p>
+                <div class="figure-row">
+                    <img src="./files/feely_the_drone/mc_stills.png" alt="Still frames of 100 simultaneous Monte-Carlo trials">
+                    <p class="figure-caption">
+                        Still frames of 100 simultaneous trials of a single experiment, at \(t = 0,\,1,\,9,\,12\) and \(38\,\)s &mdash; starting, lifting off, searching, approaching, and grasping.
+                    </p>
+                </div>
+                <div class="figure-row">
+                    <img src="./files/feely_the_drone/sim_results.png" alt="Monte-Carlo success rates and time-to-perch for tactile and feed-forward perching">
+                    <p class="figure-caption">
+                        Success rate and mean time-to-perch with standard deviation, comparing the feed-forward baseline (orange) with tactile perching (blue), swept over positional offset, yaw offset, target inclination, and target radius.
+                    </p>
+                </div>
+                <div class="table-wrap">
+                    <p class="table-caption">
+                        Table I &mdash; Range over which each method sustains a success rate above 99&nbsp;%, from 100 Monte-Carlo trials per configuration.
+                    </p>
+                    <table class="booktabs">
+                        <thead>
+                            <tr>
+                                <th>Swept quantity</th>
+                                <th>Feed-forward baseline</th>
+                                <th>Tactile perching (ours)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Position offset</td><td>&plusmn; 0.1 m</td><td><b>&plusmn; 0.6 m</b></td></tr>
+                            <tr><td>Yaw offset</td><td>&plusmn; 45&deg;</td><td><b>&plusmn; 60&deg;</b></td></tr>
+                            <tr><td>Target inclination</td><td>&plusmn; 45&deg; (degrading above 30&deg;)</td><td><b>&plusmn; 45&deg;</b></td></tr>
+                            <tr><td>Target radius</td><td>0.02 &ndash; 0.10 m</td><td><b>0.02 &ndash; 0.15 m</b></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-justify">
+                    Tactile perching widens the admissible position error by roughly a factor of six and the tolerable target radius by 50&nbsp;%. The price is time: within the narrow band where the baseline works at all, searching for the target nearly doubles the time-to-perch. Two results are worth reading carefully. Below a radius of 2&nbsp;cm <i>both</i> methods fail &mdash; not because the hand cannot envelop the target, but because such a thin target does not activate enough pads for the grasp validation to accept the perch. And the inclination sweep is the one case where touch adds nothing: the underactuated gripper alone already handles inclinations up to 45&deg;, because each finger contacts the target with a different phalanx and adapts, pulling the MAV underneath for a stable perch.
+                </p>
+                <div class="single-video-row">
+                    <video controls muted>
+                        <source src="./files/feely_the_drone/mc_vid.mp4" type='video/mp4'>
+                    </video>
+                </div>
+                <p class="figure-caption" style="max-width: 760px; margin: 0 auto 35px auto;">
+                    A Monte-Carlo experiment: 100 trials with randomized initial positions running simultaneously, from takeoff through the search pattern to the grasp.
+                </p>
+
+                <h3><b>Versatility of the Passive Grasp</b></h3><br>
+                <p class="text-justify">
+                    Because each finger is a chain of three parallel revolute joints, the hand conforms to whatever it closes around. It supports the full weight of the MAV while hanging from a human arm, tree branches of different diameters, rectangular wooden beams, a structural T-beam, and even a traffic cone &mdash; an object with a continuously varying diameter and a low-friction plastic surface. In each case a different phalanx becomes the main contact point and a different torsional spring carries the load, with the fingers compressing until the contact force balances the spring torque. No actuation, and therefore no power, is involved.
+                </p>
+                <div class="figure-row">
+                    <img src="./files/feely_the_drone/hanging_targets.png" alt="The hand supporting the MAV weight on six different structures">
+                    <p class="figure-caption">
+                        The compliant hand supporting the MAV's full weight on structures of different diameter, shape, and surface material &mdash; a human arm, branches, wooden beams, a traffic cone, and a metallic T-beam.
+                    </p>
+                </div>
+
+                <h3><b>Flight Experiments</b></h3><br>
+                <p class="text-justify">
+                    We flew 26 trials with the physical prototype, spanning cylindrical and T-bar targets and a range of deliberately corrupted target estimates: pure position offsets up to 0.6&nbsp;m, yaw offsets up to 20&deg;, target inclinations up to 30&deg;, and combinations of the two. <b>All 26 trials perched successfully</b>, at a mean time-to-perch of 47&nbsp;s (44&nbsp;s on the cylinder, 53&nbsp;s on the T-bar). The spread in duration comes almost entirely from the search phase, whose length depends on where the drone took off and how wrong the initial estimate was.
+                </p>
+                <div class="table-figure">
+                <div class="tf-left">
+                <div class="table-wrap">
+                    <p class="table-caption">
+                        Table II (a) &mdash; Cylindrical target
+                    </p>
+                    <table class="booktabs trials">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Trial</th>
+                                <th class="num">x (m)</th>
+                                <th class="num">y (m)</th>
+                                <th class="num">&theta; (&deg;)</th>
+                                <th class="num">Time (s)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="grp" rowspan="4">No Offset<br><img src="./files/feely_the_drone/trial_no_offset_cyl.png" alt="No Offset configuration"></td><td>I</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">43.0</td></tr>
+                            <tr><td>II</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">46.0</td></tr>
+                            <tr><td><b>III</b></td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">35.0</td></tr>
+                            <tr><td>IV</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">33.0</td></tr>
+
+                            <tr class="rule-above"><td class="grp" rowspan="4">Rotational Offset<br><img src="./files/feely_the_drone/trial_rot_offset_cyl.png" alt="Rotational Offset configuration"></td><td>V</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">12.5</td><td class="num">33.5</td></tr>
+                            <tr><td>VI</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">&minus;12.5</td><td class="num">43.4</td></tr>
+                            <tr><td><b>VII</b></td><td class="num">0.0</td><td class="num">0.0</td><td class="num">20.0</td><td class="num">52.0</td></tr>
+                            <tr><td>VIII</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">&minus;20.0</td><td class="num">48.0</td></tr>
+
+                            <tr class="rule-above"><td class="grp" rowspan="4">Positional Offset<br><img src="./files/feely_the_drone/trial_pos_offset_cyl.png" alt="Positional Offset configuration"></td><td>IX</td><td class="num">&minus;0.25</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">32.0</td></tr>
+                            <tr><td>X</td><td class="num">0.25</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">38.0</td></tr>
+                            <tr><td><b>XI</b></td><td class="num">&minus;0.6</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">37.0</td></tr>
+                            <tr><td>XII</td><td class="num">0.6</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">73.0</td></tr>
+
+                            <tr class="rule-above"><td class="grp" rowspan="4">Inclination Offset<br><img src="./files/feely_the_drone/trial_incl_offset_cyl.png" alt="Inclination Offset configuration"></td><td>XIII</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">10.0</td><td class="num">51.2</td></tr>
+                            <tr><td>XIV</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">&minus;10.0</td><td class="num">60.1</td></tr>
+                            <tr><td>XV</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">30.0</td><td class="num">40.0</td></tr>
+                            <tr><td>XVI</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">&minus;30.0</td><td class="num">45.4</td></tr>
+
+                            <tr class="rule-above"><td class="grp" rowspan="2">Combined Offset<br><img src="./files/feely_the_drone/trial_combined_offset_cyl.png" alt="Combined Offset configuration"></td><td><b>XVII</b></td><td class="num">&minus;0.25</td><td class="num">&minus;0.25</td><td class="num">15.0</td><td class="num">41.0</td></tr>
+                            <tr><td>XVIII</td><td class="num">&minus;0.25</td><td class="num">&minus;0.25</td><td class="num">15.0</td><td class="num">42.0</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+                <div class="tf-right">
+                <div class="table-wrap">
+                    <p class="table-caption">
+                        Table II (b) &mdash; T-Bar target
+                    </p>
+                    <table class="booktabs trials">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Trial</th>
+                                <th class="num">x (m)</th>
+                                <th class="num">y (m)</th>
+                                <th class="num">&theta; (&deg;)</th>
+                                <th class="num">Time (s)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="grp" rowspan="4">No Offset<br><img src="./files/feely_the_drone/trial_no_offset_hbar.png" alt="No Offset configuration"></td><td>XIX</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">70.0</td></tr>
+                            <tr><td>XX</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">58.3</td></tr>
+                            <tr><td>XXI</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">68.8</td></tr>
+                            <tr><td>XXII</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">56.1</td></tr>
+
+                            <tr class="rule-above"><td class="grp" rowspan="4">Positional Offset<br><img src="./files/feely_the_drone/trial_pos_offset_hbar.png" alt="Positional Offset configuration"></td><td>XXIII</td><td class="num">&minus;0.25</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">60.5</td></tr>
+                            <tr><td>XXIV</td><td class="num">0.25</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">44.2</td></tr>
+                            <tr><td>XXV</td><td class="num">&minus;0.6</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">30.0</td></tr>
+                            <tr><td>XXVI</td><td class="num">0.6</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">37.9</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tf-figure">
+                    <img src="./files/feely_the_drone/trial_timeseries.png" alt="Position and yaw over time for all 26 trials">
+                </div>
+                </div>
+                </div>
+                <p class="figure-caption" style="margin-top: 0;">
+                    Time series of the MAV's \(x\) position and yaw angle for all 26 trials on the cylinder (solid) and the T-bar (dashed), normalized so that the target pose sits at the origin and the approach happens along the \(x\)-axis. Every trial converges to the target pose; the dots mark the moment the perching state is reached. In the tables, \(\theta\) denotes yaw for the rotational and combined groups, and target inclination for the inclination group; trials in bold are the ones shown in 3D below.
+                </p>
+                <p class="text-justify">
+                    The 3D trajectories show where the variance comes from. In trial III the MAV happens to make contact during its initial approach and aligns almost immediately; in trial XI, launched with a 0.6&nbsp;m offset, it flies several passes of the search pattern before the first touch and aligns correspondingly later. In all cases the trajectory converges onto the target.
+                </p>
+                <div class="figure-row">
+                    <img src="./files/feely_the_drone/traj_3d.png" alt="3D trajectories of four selected trials" style="max-width: 780px;">
+                    <p class="figure-caption" style="max-width: 780px; margin-left: auto; margin-right: auto;">
+                        Three-dimensional trajectories of four selected trials, colored by progression through the trial. Different takeoff positions and initial offsets lead to contact at different times, but every case aligns with and perches on the target.
+                    </p>
+                </div>
+                <div class="figure-row">
+                    <img src="./files/feely_the_drone/topdown_snapshots.png" alt="Top-down snapshots of a perching maneuver" style="max-width: 820px;">
+                    <p class="figure-caption" style="max-width: 820px; margin-left: auto; margin-right: auto;">
+                        Top-down snapshots of trial XIII, showing the phases of the tactile perching maneuver.
+                    </p>
+                </div>
+                <p class="text-justify">
+                    A single trial makes the mechanism explicit. In trial III the MAV takes off, then sweeps the search pattern while cycling its fingers open and closed. A single contact at \(t = 15\,\)s ends the search; the vehicle drops below the contact, approaches, positions itself underneath, and starts aligning rotationally. During finalization all fingers close, sufficient contact accumulates at around \(t = 32\,\)s, a stable grasp is confirmed, and the perch state is entered &mdash; at which point the motors go off.
+                </p>
+                <div class="figure-row">
+                    <img src="./files/feely_the_drone/full_trial.png" alt="Position, finger opening, and contact signals over a full trial">
+                    <p class="figure-caption">
+                        Full overview of trial III: MAV position, finger opening states, and the nine contact signals across the phases of the maneuver. The shaded bands mark the state machine's states.
+                    </p>
+                </div>
+                <div class="figure-pair">
+                    <div class="ar" style="--ar: 112;">
+                        <img src="./files/feely_the_drone/steep_cylinder.png" alt="Perched on a steeply inclined cylindrical target">
                     </div>
-                    <div class="real-image">
-                        <img src="./files/feely_the_drone/real_trajs.png" width="900">
-                        <p style="font-size:1.0em"><i>Example trajectories from real-world flight trials with different initial offsets. All trials converge successfully to the target pose in a stable perch indicated by the gray circles.</i></p>
+                    <div class="ar" style="--ar: 112;">
+                        <img src="./files/feely_the_drone/steep_tbar.png" alt="Perched on the T-bar target">
                     </div>
                 </div>
+                <p class="figure-caption">
+                    Perched on a steeply inclined cylindrical target (trial XV, left) and on the T-bar (trial XX, right). Compliance in the fingers absorbs the inclination, so the same maneuver works on both.
+                </p>
+                <div class="video-pair">
+                    <div>
+                        <video controls muted>
+                            <source src="./files/feely_the_drone/PXL_20250904_180939447_reduced.mp4" type='video/mp4'>
+                        </video>
+                    </div>
+                    <div>
+                        <video controls muted>
+                            <source src="./files/feely_the_drone/recording_20250904_200955.mp4" type='video/mp4'>
+                        </video>
+                    </div>
+                </div>
+                <p class="figure-caption">
+                    Left: a close-up of the tactile perching procedure. Right: a top-down view of the maneuver in the flight arena.
+                </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 col-md-offset-0">
+                <h2><b>Limitations</b></h2><br>
+                <p class="text-justify">
+                    The procedure inherits its assumptions as failure modes. An initial offset far outside the search pattern violates <b>A.1</b> and the search never finds the target; a target too large for the hand violates <b>A.2</b> and the grasp never closes; unexpected obstacles near the estimate violate <b>A.3</b> and generate contacts that derail the alignment. In a fully integrated system these would be checked by an operator or by an onboard perception system. One subtler failure occurs right at the edge of the reliable positional range: the distal phalanx can catch on top of the target and block the MAV from moving underneath it. This is detectable &mdash; the control error in <code>TOUCHED</code> and <code>APPROACH</code> gives it away &mdash; and the vehicle can restart the approach from the abort state.
+                </p>
             </div>
         </div>
 
@@ -361,26 +777,27 @@
             <div class="col-md-12 col-md-offset-0">
                 <h2><b>Conclusion</b></h2><br>
                 <p class="text-justify">
-                    By integrating tactile sensing into a compliant gripper, we enable aerial robots to perch reliably in uncertain, cluttered environments. 
-                    Unlike prior methods, this approach does not require precise target knowledge and is robust to occlusions. 
-                    Results in both simulation and hardware show high success rates across a range of offsets and target types. 
-                    Future work will explore richer tactile sensing and onboard state estimation for outdoor operation.
+                    Embedding tactile receptors in a compliant, passively closing anthropomorphic hand lets an aerial robot perch on structures it cannot see and does not know precisely. Touch supplies exactly the feedback that vision loses at the moment of capture: where the target actually is, how the vehicle is aligned to it, and whether the grasp will hold. In simulation this sustains success rates above 99&nbsp;% across pose errors up to 0.6&nbsp;m and 60&deg;; on hardware it perched in all 26 trials on two different target geometries. More broadly, the result argues for treating contact as informative feedback in the task space rather than as a disturbance to be avoided &mdash; a paradigm that extends well past perching into aerial physical interaction at large.
                 </p>
             </div>
         </div>
 
-
         <div class="row">
             <div class="col-md-12 col-md-offset-0">
-                <h3>
-                    <b>BibTex</b>
-                </h3>
+                <h3><b>BibTeX</b></h3>
                 <div class="col-md-12 col-md-offset-2">
                     <textarea id="bibtex" class="form-control" readonly="">
-@article{bredenbeck2026,
-    title  = {Robust Perching via Touch: Embodying Tactile Grasping on Aerial Robots},
-    author = {Bredenbeck, Anton and Jadoenathmisier, Anish and Hamaza, Salua},
-    year   = {2026}
+@article{bredenbeck2026aerial,
+    title   = {Aerial Tactile Perching via an Anthropomorphic Hand
+               with Embodied Soft Tactile Receptors},
+    author  = {Bredenbeck, Anton and Jadoenathmisier, Anish and Hamaza, Salua},
+    journal = {npj Robotics},
+    volume  = {},
+    number  = {},
+    pages   = {},
+    year    = {2026},
+    note    = {In press},
+    publisher = {Nature Publishing Group}
 }</textarea>
                 </div>
             </div>
@@ -393,15 +810,11 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const textarea = document.getElementById('bibtex');
-
-            function adjustHeight(element) {
-                element.style.height = 'auto'; // Reset height to auto to get the scrollHeight
-                element.style.height = (element.scrollHeight) + 'px'; // Set height to scrollHeight
-                element.style.overflow = 'hidden'; // Hide overflow to prevent scrollbar
+            if (textarea) {
+                textarea.style.height = 'auto';
+                textarea.style.height = (textarea.scrollHeight) + 'px';
+                textarea.style.overflow = 'hidden';
             }
-
-            // Initial adjustment
-            adjustHeight(textarea);
         });
     </script>
 </body>
