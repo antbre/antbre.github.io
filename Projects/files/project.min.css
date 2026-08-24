@@ -1381,6 +1381,9 @@ input,button,select,textarea {
     box-sizing: border-box; /* Ensure padding is included in the width */
     font-family: monospace; /* Optional: use a monospace font for code */
     resize: none; /* Optional: prevent resizing */
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 a {
